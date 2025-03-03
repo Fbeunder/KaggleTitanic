@@ -25,7 +25,7 @@ Key features include:
 
 ## Repository Structure
 
-This repository will be organized as follows:
+This repository is organized as follows:
 - `data/`: Contains the dataset files
 - `notebooks/`: Jupyter notebooks for exploration and modeling
 - `src/`: Source code for reusable functions
@@ -34,8 +34,15 @@ This repository will be organized as follows:
 
 ## Getting Started
 
-Instructions for setting up and running the project will be added as development progresses.
+### Prerequisites
+- Python 3.7+
+- Required packages: pandas, numpy, scikit-learn, matplotlib, seaborn
+
+### Installation
+1. Clone this repository
+2. Install required packages
+3. Download the competition data from Kaggle
 
 ## License
 
-[Add license information here]
+MIT License
