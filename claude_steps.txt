@@ -19,18 +19,18 @@
    - Toevoegen van basismodellen zoals Logistic Regression, Random Forest, etc. ✓
    - Status: Afgerond (#6)
 
-4. **Model Training en Evaluatie implementeren**
+4. **Model Training en Evaluatie implementeren** ✓
    - Implementeren van model_trainer.py voor het trainen van de modellen ✓
    - Implementeren van model_evaluator.py voor het evalueren van model performance ✓
    - Cross-validatie toevoegen ✓
    - Hyperparameter tuning functionaliteit toevoegen ✓
    - Visualisatie van model resultaten toevoegen ✓
-   - Status: PR aangemaakt (#8), wacht op goedkeuring
+   - Status: Afgerond (#8)
 
 5. **Basis Feature Engineering implementeren**
-   - Implementeren van feature_creator.py voor het creëren van basale features
-   - Implementeren van feature_selector.py voor feature selectie
-   - Status: Nog niet gestart
+   - Implementeren van feature_creator.py voor het creëren van basale features ✓
+   - Implementeren van feature_selector.py voor feature selectie ✓
+   - Status: PR aangemaakt (#10), wacht op goedkeuring
 
 6. **Web Interface ontwikkelen**
    - Implementeren van app.py als hoofdmodule voor de web applicatie
@@ -57,19 +57,20 @@
 10. **Testen**
     - Unit tests schrijven voor de belangrijkste functionaliteiten
     - End-to-end testen van de applicatie
-    - Status: Gedeeltelijk geïmplementeerd (tests voor modelling modules aanwezig in PR #8)
+    - Status: Gedeeltelijk geïmplementeerd (tests voor modelling en feature engineering modules aanwezig)
 
 ## Nice-to-haves
 
 1. **Hyperparameter optimalisatie**
    - Toevoegen van grid search of random search voor het optimaliseren van model parameters
    - Automatiseren van hyperparameter tuning
-   - Status: Basisimplementatie aanwezig in Model Trainer (PR #8)
+   - Status: Basisimplementatie aanwezig in Model Trainer (#8)
 
 2. **Uitgebreide feature engineering**
    - Geavanceerde feature engineering technieken toepassen
    - Feature interactie analyses
    - Automatische feature engineering
+   - Status: Basisimplementatie aanwezig in PR #10
 
 3. **Ensemble modellen**
    - Implementeren van stacking of blending technieken
@@ -78,7 +79,7 @@
 4. **Model interpretability toevoegen**
    - Inzichten in feature importance visualiseren
    - SHAP values implementeren voor model interpretatie
-   - Status: Basisfunctionaliteit aanwezig in Model Factory en Evaluator
+   - Status: Basisfunctionaliteit aanwezig in Model Factory, Evaluator en Feature Selector
 
 5. **Real-time model training**
    - Mogelijkheid toevoegen om modellen direct in de browser te trainen
