@@ -20,6 +20,7 @@ from src.modelling.model_trainer import ModelTrainer
 from src.modelling.model_evaluator import ModelEvaluator
 from src.feature_engineering.feature_creator import FeatureCreator
 from src.feature_engineering.feature_selector import FeatureSelector
+from src.utilities.submission_generator import SubmissionGenerator
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -50,6 +51,7 @@ class ModelInterface:
         self.model_factory = ModelFactory()
         self.model_trainer = ModelTrainer()
         self.model_evaluator = ModelEvaluator()
+        self.submission_generator = SubmissionGenerator()
         
         self.train_data = None
         self.test_data = None
@@ -286,6 +288,113 @@ class ModelInterface:
             logger.error(f"Error in predict_survival: {e}")
             return None
     
+    def generate_kaggle_submission(self, model_name=None, custom_file_name=None, format='csv'):
+        """
+        Generate a Kaggle submission file for a specific model.
+        
+        Args:
+            model_name (str, optional): Name of the model to use. If None, uses the best performing model.
+            custom_file_name (str, optional): Custom file name for the submission.
+            format (str, optional): Output format ('csv' or 'json').
+            
+        Returns:
+            dict: Submission generation results with file path and validation info.
+        """
+        logger.info(f"Generating Kaggle submission for model {model_name}")
+        
+        try:
+            # If no model specified, use the best performing model
+            if model_name is None:
+                model_name = self._get_best_model_name()
+                logger.info(f"Using best performing model: {model_name}")
+            
+            # Load model
+            model = self._get_model(model_name)
+            if model is None:
+                return {
+                    'success': False,
+                    'error': f"Model {model_name} not found"
+                }
+            
+            # Prepare test data if needed
+            if self.X_test is None:
+                success = self.prepare_data_for_training(
+                    feature_engineering=hasattr(model, 'feature_engineering') and model.feature_engineering
+                )
+                if not success:
+                    return {
+                        'success': False,
+                        'error': "Failed to prepare test data"
+                    }
+            
+            # Generate predictions
+            predictions = model.predict(self.X_test)
+            
+            # Create submission DataFrame
+            loader = DataLoader()
+            test_data = loader.load_test_data()
+            
+            if test_data is None:
+                return {
+                    'success': False,
+                    'error': "Could not load test data"
+                }
+            
+            submission_df = pd.DataFrame({
+                'PassengerId': test_data['PassengerId'],
+                'Survived': predictions
+            })
+            
+            # Generate submission file
+            if custom_file_name:
+                file_name = custom_file_name
+            else:
+                file_name = None  # Let the submission generator create a name
+            
+            if format.lower() == 'csv':
+                # Use the submission generator to create the file
+                submission_path = self.submission_generator.generate_submission(model, self.X_test, file_name)
+            else:
+                # Use export_submission for other formats
+                submission_path = self.submission_generator.export_submission(model_name, submission_df, format)
+            
+            # Validate the submission
+            validation_result = self.submission_generator.validate_submission(submission_path)
+            
+            return {
+                'success': True,
+                'file_path': submission_path,
+                'model_name': model_name,
+                'validation': validation_result
+            }
+        except Exception as e:
+            logger.error(f"Error generating Kaggle submission: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+    
+    def list_available_submissions(self):
+        """
+        List all available submission files.
+        
+        Returns:
+            list: List of submission file information.
+        """
+        try:
+            submissions = []
+            submission_paths = self.submission_generator.list_submissions()
+            
+            for path in submission_paths:
+                details = self.submission_generator.get_submission_details(path)
+                if 'error' not in details:
+                    submissions.append(details)
+            
+            return submissions
+        except Exception as e:
+            logger.error(f"Error listing submissions: {e}")
+            return []
+    
     def get_model_performance(self, model_name=None):
         """
         Get performance metrics for a specific model or all models.
@@ -374,6 +483,35 @@ class ModelInterface:
         except Exception as e:
             logger.error(f"Error in list_available_models: {e}")
             return []
+    
+    def _get_best_model_name(self):
+        """
+        Get the name of the best performing model based on accuracy.
+        
+        Returns:
+            str: Name of the best performing model.
+        """
+        try:
+            best_model = None
+            best_accuracy = -1
+            
+            for name, evaluation in self.model_evaluations.items():
+                accuracy = evaluation.get('metrics', {}).get('accuracy', 0)
+                if accuracy > best_accuracy:
+                    best_accuracy = accuracy
+                    best_model = name
+            
+            if best_model is None:
+                # If no models in memory, check saved models
+                saved_models = self._list_saved_models()
+                if saved_models:
+                    # Default to first saved model if no metrics available
+                    best_model = saved_models[0]
+            
+            return best_model
+        except Exception as e:
+            logger.error(f"Error getting best model: {e}")
+            return None
     
     def _get_param_grid(self, model_name):
         """
