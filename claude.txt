@@ -52,13 +52,25 @@ De applicatie wordt opgedeeld in de volgende modules:
 - **Afhankelijkheid**: Geen
 
 ### model_trainer.py
-- **Status**: Basisimplementatie aanwezig
-- **Functionaliteit**: Verantwoordelijk voor het trainen en cross-valideren van modellen
+- **Status**: Volledige implementatie aanwezig
+- **Functionaliteit**: 
+  - Trainen van modellen met gestandaardiseerde interface
+  - Cross-validatie voor model evaluatie
+  - Train-test-validation data splitsing
+  - Hyperparameter tuning via GridSearchCV
+  - Trainen van meerdere modellen tegelijkertijd
+  - Opslaan en bijhouden van getrainde modellen
 - **Afhankelijkheid**: model_factory.py, data_preprocessor.py
 
 ### model_evaluator.py
-- **Status**: Basisimplementatie aanwezig
-- **Functionaliteit**: Verantwoordelijk voor het evalueren van modellen op basis van verschillende metrics
+- **Status**: Volledige implementatie aanwezig
+- **Functionaliteit**: 
+  - Evalueren van modellen op verschillende metrics
+  - Berekenen van accuracy, precision, recall, F1, AUC en andere metrics
+  - Genereren van confusion matrices
+  - Plotten van ROC curves
+  - Vergelijken van verschillende modellen
+  - Visualisatie van model performance
 - **Afhankelijkheid**: model_trainer.py
 
 ## 3. Feature Engineering
