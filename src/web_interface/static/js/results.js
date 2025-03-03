@@ -5,7 +5,25 @@
  * It handles the visualization of model metrics and comparison of models.
  */
 
+// Global variable to track if Plotly is available
+let plotlyAvailable = false;
+
+// Check if Plotly is available when the script loads
+if (typeof Plotly !== 'undefined') {
+    plotlyAvailable = true;
+    console.log('Plotly loaded successfully', Plotly.version);
+} else {
+    console.error('Plotly not available on initial load');
+    // Will attempt to use CDN version in the error handler in HTML
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+    // Double check if Plotly has loaded by this point (might have loaded asynchronously)
+    if (typeof Plotly !== 'undefined') {
+        plotlyAvailable = true;
+        console.log('Plotly available on DOMContentLoaded', Plotly.version);
+    }
+    
     // Initialize visualization components
     initializePerformanceChart();
     initializeRocCurvesChart();
@@ -58,6 +76,43 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Function to show model details in modal
     function showModelDetails(modelName) {
+        // Show loading spinners in the visualization containers
+        document.getElementById('modal-confusion-matrix').innerHTML = `
+            <div class="d-flex justify-content-center align-items-center h-100">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>`;
+        
+        document.getElementById('modal-roc-curve').innerHTML = `
+            <div class="d-flex justify-content-center align-items-center h-100">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>`;
+        
+        document.getElementById('modal-feature-importance').innerHTML = `
+            <div class="d-flex justify-content-center align-items-center h-100">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>`;
+        
+        // Set modal title immediately
+        document.getElementById('modelDetailsModalLabel').textContent = 
+            `${formatModelName(modelName)} Details`;
+        
+        // Show the modal immediately to show loading state
+        const modalElement = document.getElementById('modelDetailsModal');
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();
+        
+        // Hide error message (will show again if needed)
+        const errorElement = document.getElementById('visualization-errors');
+        if (errorElement) {
+            errorElement.classList.add('d-none');
+        }
+        
         // Fetch model details from the server
         fetch(`/api/model-details?model=${modelName}`)
             .then(response => {
@@ -67,9 +122,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.json();
             })
             .then(data => {
-                // Set modal title
-                document.getElementById('modelDetailsModalLabel').textContent = 
-                    `${formatModelName(modelName)} Details`;
+                console.log('Model details data:', data);
                 
                 // Fill in model parameters
                 const paramsHTML = Object.entries(data.params || {})
@@ -90,20 +143,92 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('model-metrics').innerHTML = 
                     metricsHTML || '<tr><td colspan="2">No metrics available</td></tr>';
                 
-                // Render visualizations
-                renderConfusionMatrix(data.confusion_matrix, 'modal-confusion-matrix');
-                renderRocCurve(data.roc_curve, 'modal-roc-curve');
-                renderFeatureImportance(data.feature_importance, 'modal-feature-importance');
+                // Render visualizations (with error handling for each)
+                try {
+                    renderConfusionMatrix(data.confusion_matrix, 'modal-confusion-matrix');
+                } catch (error) {
+                    console.error('Error rendering confusion matrix:', error);
+                    document.getElementById('modal-confusion-matrix').innerHTML = `
+                        <div class="alert alert-warning">
+                            Error rendering confusion matrix. See console for details.
+                        </div>`;
+                    showVisualizationError('Confusion Matrix');
+                }
                 
-                // Show the modal
-                const modalElement = document.getElementById('modelDetailsModal');
-                const modal = new bootstrap.Modal(modalElement);
-                modal.show();
+                try {
+                    renderRocCurve(data.roc_curve, 'modal-roc-curve');
+                } catch (error) {
+                    console.error('Error rendering ROC curve:', error);
+                    document.getElementById('modal-roc-curve').innerHTML = `
+                        <div class="alert alert-warning">
+                            Error rendering ROC curve. See console for details.
+                        </div>`;
+                    showVisualizationError('ROC Curve');
+                }
+                
+                try {
+                    renderFeatureImportance(data.feature_importance, 'modal-feature-importance');
+                } catch (error) {
+                    console.error('Error rendering feature importance:', error);
+                    document.getElementById('modal-feature-importance').innerHTML = `
+                        <div class="alert alert-warning">
+                            Error rendering feature importance. See console for details.
+                        </div>`;
+                    showVisualizationError('Feature Importance');
+                }
             })
             .catch(error => {
                 console.error('Error fetching model details:', error);
-                alert(`Error loading model details: ${error.message}`);
+                
+                // Show fallback message in each visualization area
+                document.getElementById('modal-confusion-matrix').innerHTML = `
+                    <div class="alert alert-danger">
+                        <strong>Failed to load data.</strong><br>
+                        ${error.message}
+                    </div>`;
+                
+                document.getElementById('modal-roc-curve').innerHTML = `
+                    <div class="alert alert-danger">
+                        <strong>Failed to load data.</strong><br>
+                        ${error.message}
+                    </div>`;
+                
+                document.getElementById('modal-feature-importance').innerHTML = `
+                    <div class="alert alert-danger">
+                        <strong>Failed to load data.</strong><br>
+                        ${error.message}
+                    </div>`;
+                
+                showVisualizationError('API Request');
             });
+    }
+
+    // Function to show visualization error
+    function showVisualizationError(component) {
+        // Show error message area
+        const errorElement = document.getElementById('visualization-errors');
+        const errorDetailsElement = document.getElementById('visualization-error-details');
+        
+        if (errorElement && errorDetailsElement) {
+            errorElement.classList.remove('d-none');
+            
+            // Add specific error
+            const errorItem = document.createElement('p');
+            errorItem.innerHTML = `<strong>${component}</strong>: Failed to render visualization. Check browser console for details.`;
+            errorDetailsElement.appendChild(errorItem);
+            
+            // Add general troubleshooting tips if this is the first error
+            if (errorDetailsElement.children.length === 1) {
+                const tipsList = document.createElement('ul');
+                tipsList.innerHTML = `
+                    <li>Make sure your browser is up to date</li>
+                    <li>Check if you have JavaScript enabled</li>
+                    <li>Try refreshing the page</li>
+                    <li>Check if you have any browser extensions that might be blocking scripts</li>
+                `;
+                errorDetailsElement.appendChild(tipsList);
+            }
+        }
     }
 
     // Function to render confusion matrix
@@ -116,43 +241,88 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        // Create confusion matrix visualization using Plotly
-        const data = [{
-            z: confusionMatrix,
-            x: ['Predicted Died', 'Predicted Survived'],
-            y: ['Actual Died', 'Actual Survived'],
-            type: 'heatmap',
-            colorscale: 'Blues',
-            showscale: false,
-            text: [
-                [`TN: ${confusionMatrix[0][0]}`, `FP: ${confusionMatrix[0][1]}`],
-                [`FN: ${confusionMatrix[1][0]}`, `TP: ${confusionMatrix[1][1]}`]
-            ],
-            hoverinfo: 'text'
-        }];
-        
-        const layout = {
-            title: 'Confusion Matrix',
-            xaxis: { title: 'Predicted' },
-            yaxis: { title: 'Actual' },
-            annotations: []
-        };
-        
-        // Add text annotations to each cell
-        for (let i = 0; i < 2; i++) {
-            for (let j = 0; j < 2; j++) {
-                const annotationText = confusionMatrix[i][j].toString();
-                layout.annotations.push({
-                    x: j,
-                    y: i,
-                    text: annotationText,
-                    font: { color: 'white' },
-                    showarrow: false
-                });
-            }
+        // Check if Plotly is available
+        if (!plotlyAvailable) {
+            // Fallback to table representation
+            renderConfusionMatrixAsTable(confusionMatrix, elementId);
+            return;
         }
         
-        Plotly.newPlot(elementId, data, layout, { responsive: true });
+        // Create confusion matrix visualization using Plotly
+        try {
+            const data = [{
+                z: confusionMatrix,
+                x: ['Predicted Died', 'Predicted Survived'],
+                y: ['Actual Died', 'Actual Survived'],
+                type: 'heatmap',
+                colorscale: 'Blues',
+                showscale: false,
+                text: [
+                    [`TN: ${confusionMatrix[0][0]}`, `FP: ${confusionMatrix[0][1]}`],
+                    [`FN: ${confusionMatrix[1][0]}`, `TP: ${confusionMatrix[1][1]}`]
+                ],
+                hoverinfo: 'text'
+            }];
+            
+            const layout = {
+                title: 'Confusion Matrix',
+                xaxis: { title: 'Predicted' },
+                yaxis: { title: 'Actual' },
+                annotations: []
+            };
+            
+            // Add text annotations to each cell
+            for (let i = 0; i < 2; i++) {
+                for (let j = 0; j < 2; j++) {
+                    const annotationText = confusionMatrix[i][j].toString();
+                    layout.annotations.push({
+                        x: j,
+                        y: i,
+                        text: annotationText,
+                        font: { color: 'white' },
+                        showarrow: false
+                    });
+                }
+            }
+            
+            Plotly.newPlot(elementId, data, layout, { responsive: true });
+        } catch (error) {
+            console.error('Error creating confusion matrix plot:', error);
+            renderConfusionMatrixAsTable(confusionMatrix, elementId);
+        }
+    }
+    
+    // Function to render confusion matrix as HTML table (fallback)
+    function renderConfusionMatrixAsTable(confusionMatrix, elementId) {
+        const element = document.getElementById(elementId);
+        
+        // Create HTML table
+        const tableHTML = `
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Predicted Died</th>
+                        <th>Predicted Survived</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>Actual Died</th>
+                        <td class="bg-info text-white">${confusionMatrix[0][0]}</td>
+                        <td>${confusionMatrix[0][1]}</td>
+                    </tr>
+                    <tr>
+                        <th>Actual Survived</th>
+                        <td>${confusionMatrix[1][0]}</td>
+                        <td class="bg-info text-white">${confusionMatrix[1][1]}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="text-muted small">Fallback table mode: Plotly visualization not available</p>
+        `;
+        
+        element.innerHTML = tableHTML;
     }
 
     // Function to render ROC curve
@@ -165,35 +335,73 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
+        // Check if Plotly is available
+        if (!plotlyAvailable) {
+            // Fallback to simplified display
+            renderRocCurveAsSummary(rocData, elementId);
+            return;
+        }
+        
         // Create ROC curve visualization using Plotly
-        const data = [
-            {
-                x: rocData.fpr,
-                y: rocData.tpr,
-                type: 'scatter',
-                mode: 'lines',
-                name: `ROC Curve (AUC = ${rocData.auc.toFixed(3)})`,
-                line: { color: 'blue', width: 2 }
-            },
-            {
-                x: [0, 1],
-                y: [0, 1],
-                type: 'scatter',
-                mode: 'lines',
-                name: 'Random',
-                line: { color: 'grey', width: 2, dash: 'dash' }
-            }
-        ];
+        try {
+            const data = [
+                {
+                    x: rocData.fpr,
+                    y: rocData.tpr,
+                    type: 'scatter',
+                    mode: 'lines',
+                    name: `ROC Curve (AUC = ${rocData.auc.toFixed(3)})`,
+                    line: { color: 'blue', width: 2 }
+                },
+                {
+                    x: [0, 1],
+                    y: [0, 1],
+                    type: 'scatter',
+                    mode: 'lines',
+                    name: 'Random',
+                    line: { color: 'grey', width: 2, dash: 'dash' }
+                }
+            ];
+            
+            const layout = {
+                title: 'ROC Curve',
+                xaxis: { title: 'False Positive Rate' },
+                yaxis: { title: 'True Positive Rate' },
+                legend: { x: 0.6, y: 0.2 },
+                showlegend: true
+            };
+            
+            Plotly.newPlot(elementId, data, layout, { responsive: true });
+        } catch (error) {
+            console.error('Error creating ROC curve plot:', error);
+            renderRocCurveAsSummary(rocData, elementId);
+        }
+    }
+    
+    // Function to render ROC curve as simplified summary (fallback)
+    function renderRocCurveAsSummary(rocData, elementId) {
+        const element = document.getElementById(elementId);
         
-        const layout = {
-            title: 'ROC Curve',
-            xaxis: { title: 'False Positive Rate' },
-            yaxis: { title: 'True Positive Rate' },
-            legend: { x: 0.6, y: 0.2 },
-            showlegend: true
-        };
+        // Create a simple card with AUC value
+        const auc = rocData.auc.toFixed(3);
+        const cardHTML = `
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">ROC Curve Summary</h5>
+                    <p class="card-text">Area Under Curve (AUC): <strong>${auc}</strong></p>
+                    <div class="progress mb-3">
+                        <div class="progress-bar bg-success" role="progressbar" 
+                            style="width: ${auc * 100}%" 
+                            aria-valuenow="${auc * 100}" aria-valuemin="0" aria-valuemax="100">
+                            ${(auc * 100).toFixed(1)}%
+                        </div>
+                    </div>
+                    <p class="text-muted small">Fallback mode: Plotly visualization not available</p>
+                </div>
+            </div>
+        `;
         
-        Plotly.newPlot(elementId, data, layout, { responsive: true });
+        element.innerHTML = cardHTML;
     }
 
     // Function to render feature importance
@@ -217,29 +425,93 @@ document.addEventListener('DOMContentLoaded', function() {
         const sortedFeatures = indices.map(i => features[i]);
         const sortedImportance = indices.map(i => importanceValues[i]);
         
+        // Only show top 10 features
+        const topFeatures = sortedFeatures.slice(0, 10);
+        const topImportance = sortedImportance.slice(0, 10);
+        
+        // Check if Plotly is available
+        if (!plotlyAvailable) {
+            // Fallback to horizontal bar representation with HTML/CSS
+            renderFeatureImportanceAsTable(topFeatures, topImportance, elementId);
+            return;
+        }
+        
         // Create feature importance visualization using Plotly
-        const data = [{
-            y: sortedFeatures.slice(0, 10), // Show top 10 features
-            x: sortedImportance.slice(0, 10),
-            type: 'bar',
-            orientation: 'h',
-            marker: {
-                color: 'rgba(58, 123, 213, 0.8)',
-                line: {
-                    color: 'rgba(58, 123, 213, 1.0)',
-                    width: 1
+        try {
+            const data = [{
+                y: topFeatures,
+                x: topImportance,
+                type: 'bar',
+                orientation: 'h',
+                marker: {
+                    color: 'rgba(58, 123, 213, 0.8)',
+                    line: {
+                        color: 'rgba(58, 123, 213, 1.0)',
+                        width: 1
+                    }
                 }
-            }
-        }];
+            }];
+            
+            const layout = {
+                title: 'Top 10 Feature Importance',
+                xaxis: { title: 'Importance' },
+                yaxis: { title: 'Feature', automargin: true },
+                margin: { l: 150 } // Add more space for feature names
+            };
+            
+            Plotly.newPlot(elementId, data, layout, { responsive: true });
+        } catch (error) {
+            console.error('Error creating feature importance plot:', error);
+            renderFeatureImportanceAsTable(topFeatures, topImportance, elementId);
+        }
+    }
+    
+    // Function to render feature importance as HTML table with bars (fallback)
+    function renderFeatureImportanceAsTable(features, importance, elementId) {
+        const element = document.getElementById(elementId);
         
-        const layout = {
-            title: 'Top 10 Feature Importance',
-            xaxis: { title: 'Importance' },
-            yaxis: { title: 'Feature', automargin: true },
-            margin: { l: 150 } // Add more space for feature names
-        };
+        // Create HTML table with CSS progress bars
+        let tableHTML = `
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Importance</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
         
-        Plotly.newPlot(elementId, data, layout, { responsive: true });
+        // Add rows
+        features.forEach((feature, index) => {
+            const value = importance[index];
+            const percentage = (value * 100).toFixed(1);
+            
+            tableHTML += `
+                <tr>
+                    <td>${feature}</td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="progress flex-grow-1 me-2" style="height: 10px;">
+                                <div class="progress-bar bg-primary" role="progressbar" 
+                                    style="width: ${percentage}%" 
+                                    aria-valuenow="${percentage}" aria-valuemin="0" aria-valuemax="100">
+                                </div>
+                            </div>
+                            <span>${value.toFixed(3)}</span>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+        
+        tableHTML += `
+                </tbody>
+            </table>
+            <p class="text-muted small">Fallback table mode: Plotly visualization not available</p>
+        `;
+        
+        element.innerHTML = tableHTML;
     }
 
     // Function to initialize main performance chart
@@ -285,26 +557,81 @@ document.addEventListener('DOMContentLoaded', function() {
                 ctx.dataset.f1 = JSON.stringify(data.f1);
                 ctx.dataset.auc = JSON.stringify(data.auc);
                 
-                // Create bar chart
-                Plotly.newPlot('performance-chart', [{
-                    x: formattedModelNames,
-                    y: data.accuracy,
-                    type: 'bar',
-                    name: 'Accuracy',
-                    marker: {
-                        color: 'rgba(75, 192, 192, 0.8)'
-                    }
-                }], {
-                    title: 'Model Performance (Accuracy)',
-                    xaxis: { title: 'Model' },
-                    yaxis: { title: 'Accuracy (%)', range: [0, 100] }
-                }, { responsive: true });
+                // Check if Plotly is available
+                if (!plotlyAvailable) {
+                    // Fallback to table
+                    renderPerformanceAsTable(data, 'performance-chart');
+                    return;
+                }
+                
+                // Create bar chart with Plotly
+                try {
+                    Plotly.newPlot('performance-chart', [{
+                        x: formattedModelNames,
+                        y: data.accuracy,
+                        type: 'bar',
+                        name: 'Accuracy',
+                        marker: {
+                            color: 'rgba(75, 192, 192, 0.8)'
+                        }
+                    }], {
+                        title: 'Model Performance (Accuracy)',
+                        xaxis: { title: 'Model' },
+                        yaxis: { title: 'Accuracy (%)', range: [0, 100] }
+                    }, { responsive: true });
+                } catch (error) {
+                    console.error('Error creating performance chart:', error);
+                    renderPerformanceAsTable(data, 'performance-chart');
+                }
             })
             .catch(error => {
                 console.error('Error fetching model comparison data:', error);
                 document.getElementById('performance-chart').innerHTML = 
                     `<div class="alert alert-danger">Error loading performance data: ${error.message}</div>`;
             });
+    }
+    
+    // Function to render performance as table (fallback)
+    function renderPerformanceAsTable(data, elementId) {
+        const element = document.getElementById(elementId);
+        
+        // Create HTML table
+        let tableHTML = `
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Model</th>
+                        <th>Accuracy</th>
+                        <th>Precision</th>
+                        <th>Recall</th>
+                        <th>F1</th>
+                        <th>AUC</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+        
+        // Add rows
+        data.models.forEach((model, index) => {
+            tableHTML += `
+                <tr>
+                    <td>${formatModelName(model)}</td>
+                    <td>${data.accuracy[index].toFixed(1)}%</td>
+                    <td>${data.precision[index].toFixed(1)}%</td>
+                    <td>${data.recall[index].toFixed(1)}%</td>
+                    <td>${data.f1[index].toFixed(1)}%</td>
+                    <td>${data.auc[index].toFixed(3)}</td>
+                </tr>
+            `;
+        });
+        
+        tableHTML += `
+                </tbody>
+            </table>
+            <p class="text-muted small">Fallback table mode: Plotly visualization not available</p>
+        `;
+        
+        element.innerHTML = tableHTML;
     }
 
     // Function to update performance chart based on selected metric
@@ -325,20 +652,30 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
+        // Check if Plotly is available
+        if (!plotlyAvailable) {
+            // Fallback already handled in initializePerformanceChart
+            return;
+        }
+        
         // Update chart
-        Plotly.react('performance-chart', [{
-            x: models,
-            y: metricData,
-            type: 'bar',
-            name: formatMetricName(metric),
-            marker: {
-                color: getMetricColor(metric)
-            }
-        }], {
-            title: `Model Performance (${formatMetricName(metric)})`,
-            xaxis: { title: 'Model' },
-            yaxis: { title: `${formatMetricName(metric)} (${metric === 'auc' ? '' : '%'})`, range: [0, metric === 'auc' ? 1 : 100] }
-        }, { responsive: true });
+        try {
+            Plotly.react('performance-chart', [{
+                x: models,
+                y: metricData,
+                type: 'bar',
+                name: formatMetricName(metric),
+                marker: {
+                    color: getMetricColor(metric)
+                }
+            }], {
+                title: `Model Performance (${formatMetricName(metric)})`,
+                xaxis: { title: 'Model' },
+                yaxis: { title: `${formatMetricName(metric)} (${metric === 'auc' ? '' : '%'})`, range: [0, metric === 'auc' ? 1 : 100] }
+            }, { responsive: true });
+        } catch (error) {
+            console.error('Error updating performance chart:', error);
+        }
     }
 
     // Function to initialize ROC curves chart
@@ -371,6 +708,13 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 const chartElement = document.getElementById('roc-curves-chart');
                 chartElement.innerHTML = ''; // Clear any placeholder content
+                
+                // Check if Plotly is available
+                if (!plotlyAvailable) {
+                    // Fallback to table of AUC values
+                    renderRocCurvesAsTable(data, chartElement);
+                    return;
+                }
                 
                 // Create chart traces for each model
                 const traces = [];
@@ -407,18 +751,70 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
                 
                 // Create plot
-                Plotly.newPlot('roc-curves-chart', traces, {
-                    title: 'ROC Curves Comparison',
-                    xaxis: { title: 'False Positive Rate' },
-                    yaxis: { title: 'True Positive Rate' },
-                    legend: { x: 0.6, y: 0.2 }
-                }, { responsive: true });
+                try {
+                    Plotly.newPlot('roc-curves-chart', traces, {
+                        title: 'ROC Curves Comparison',
+                        xaxis: { title: 'False Positive Rate' },
+                        yaxis: { title: 'True Positive Rate' },
+                        legend: { x: 0.6, y: 0.2 }
+                    }, { responsive: true });
+                } catch (error) {
+                    console.error('Error creating ROC curves comparison:', error);
+                    renderRocCurvesAsTable(data, chartElement);
+                }
             })
             .catch(error => {
                 console.error('Error fetching ROC curves data:', error);
                 document.getElementById('roc-curves-chart').innerHTML = 
                     `<div class="alert alert-danger">Error loading ROC curves: ${error.message}</div>`;
             });
+    }
+    
+    // Function to render ROC curves as table (fallback)
+    function renderRocCurvesAsTable(data, element) {
+        // Create HTML table of AUC values
+        let tableHTML = `
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Model</th>
+                        <th>AUC</th>
+                        <th>Performance</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+        
+        // Add rows
+        Object.entries(data).forEach(([modelName, rocData]) => {
+            if (rocData && rocData.auc) {
+                const auc = rocData.auc.toFixed(3);
+                const percentage = (rocData.auc * 100).toFixed(1);
+                
+                tableHTML += `
+                    <tr>
+                        <td>${formatModelName(modelName)}</td>
+                        <td>${auc}</td>
+                        <td>
+                            <div class="progress" style="height: 10px;">
+                                <div class="progress-bar" role="progressbar" 
+                                    style="width: ${percentage}%" 
+                                    aria-valuenow="${percentage}" aria-valuemin="0" aria-valuemax="100">
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+        });
+        
+        tableHTML += `
+                </tbody>
+            </table>
+            <p class="text-muted small">Fallback table mode: Plotly visualization not available</p>
+        `;
+        
+        element.innerHTML = tableHTML;
     }
 
     // Function to initialize feature importance chart
@@ -475,25 +871,37 @@ document.addEventListener('DOMContentLoaded', function() {
                 const topFeatures = sortedFeatures.slice(0, 10);
                 const topImportance = sortedImportance.slice(0, 10);
                 
+                // Check if Plotly is available
+                if (!plotlyAvailable) {
+                    // Fallback to table
+                    renderFeatureImportanceAsTable(topFeatures, topImportance, 'feature-importance-chart');
+                    return;
+                }
+                
                 // Create chart
-                Plotly.newPlot('feature-importance-chart', [{
-                    y: topFeatures,
-                    x: topImportance,
-                    type: 'bar',
-                    orientation: 'h',
-                    marker: {
-                        color: 'rgba(58, 123, 213, 0.8)',
-                        line: {
-                            color: 'rgba(58, 123, 213, 1.0)',
-                            width: 1
+                try {
+                    Plotly.newPlot('feature-importance-chart', [{
+                        y: topFeatures,
+                        x: topImportance,
+                        type: 'bar',
+                        orientation: 'h',
+                        marker: {
+                            color: 'rgba(58, 123, 213, 0.8)',
+                            line: {
+                                color: 'rgba(58, 123, 213, 1.0)',
+                                width: 1
+                            }
                         }
-                    }
-                }], {
-                    title: `Feature Importance for ${formatModelName(modelName)}`,
-                    xaxis: { title: 'Importance' },
-                    yaxis: { title: 'Feature', automargin: true },
-                    margin: { l: 150 } // Add more space for feature names
-                }, { responsive: true });
+                    }], {
+                        title: `Feature Importance for ${formatModelName(modelName)}`,
+                        xaxis: { title: 'Importance' },
+                        yaxis: { title: 'Feature', automargin: true },
+                        margin: { l: 150 } // Add more space for feature names
+                    }, { responsive: true });
+                } catch (error) {
+                    console.error('Error creating feature importance chart:', error);
+                    renderFeatureImportanceAsTable(topFeatures, topImportance, 'feature-importance-chart');
+                }
             })
             .catch(error => {
                 console.error('Error fetching feature importance data:', error);
@@ -523,6 +931,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'recall': 'Recall',
             'f1': 'F1 Score',
             'roc_auc': 'ROC AUC',
+            'auc': 'AUC-ROC',
             'average_precision': 'Average Precision'
         };
         
