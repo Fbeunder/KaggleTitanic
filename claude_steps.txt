@@ -1,0 +1,92 @@
+# Volgende stappen
+
+## Must-haves
+
+1. **Projectbasis opzetten**
+   - Opzetten van de basisstructuur van het project
+   - Aanmaken van de benodigde modules en mappen
+   - Configuratie van de development omgeving
+
+2. **Data processing implementeren**
+   - Implementeren van data_loader.py om train.csv en test.csv te laden
+   - Implementeren van data_preprocessor.py voor basis data cleaning en transformatie
+   - Exploratory Data Analysis om inzicht te krijgen in de data
+
+3. **Model Factory implementeren**
+   - Implementeren van de basis model factory met initiële algoritmes
+   - Toevoegen van basismodellen zoals Logistic Regression, Random Forest, etc.
+
+4. **Model Training en Evaluatie implementeren**
+   - Implementeren van model_trainer.py voor het trainen van de modellen
+   - Implementeren van model_evaluator.py voor het evalueren van model performance
+   - Cross-validatie toevoegen
+
+5. **Basis Feature Engineering implementeren**
+   - Implementeren van feature_creator.py voor het creëren van basale features
+   - Implementeren van feature_selector.py voor feature selectie
+
+6. **Web Interface ontwikkelen**
+   - Implementeren van app.py als hoofdmodule voor de web applicatie
+   - Implementeren van model_interface.py voor interactie tussen web en modellen
+   - Ontwikkelen van een basis UI
+
+7. **Dashboard voor visualisatie**
+   - Implementeren van dashboard.py voor het visualiseren van resultaten
+   - Toevoegen van grafieken en plots voor data en model performance
+
+8. **Submission Generator implementeren**
+   - Implementeren van submission_generator.py voor het genereren van Kaggle submissions
+   - Testen van submission bestanden
+
+9. **Uitgebreide documentatie**
+   - README.md met gebruiksinstructies
+   - Documentatie binnen de code
+   - Requirements bestand voor dependencies
+
+10. **Testen**
+    - Unit tests schrijven voor de belangrijkste functionaliteiten
+    - End-to-end testen van de applicatie
+
+## Nice-to-haves
+
+1. **Hyperparameter optimalisatie**
+   - Toevoegen van grid search of random search voor het optimaliseren van model parameters
+   - Automatiseren van hyperparameter tuning
+
+2. **Uitgebreide feature engineering**
+   - Geavanceerde feature engineering technieken toepassen
+   - Feature interactie analyses
+   - Automatische feature engineering
+
+3. **Ensemble modellen**
+   - Implementeren van stacking of blending technieken
+   - Gewogen gemiddelden van voorspellingen
+
+4. **Model interpretability toevoegen**
+   - Inzichten in feature importance visualiseren
+   - SHAP values implementeren voor model interpretatie
+
+5. **Real-time model training**
+   - Mogelijkheid toevoegen om modellen direct in de browser te trainen
+   - Interactieve aanpassing van model parameters
+
+6. **Gebruikersaccounts**
+   - Implementeren van gebruikersregistratie en login
+   - Opslaan van user-specifieke modellen en resultaten
+
+7. **API voor externe toegang**
+   - RESTful API implementeren voor toegang tot modellen
+   - Documentatie voor API gebruik
+
+8. **Verbeterde UI/UX**
+   - Responsief design voor verschillende apparaten
+   - Verbeterde gebruikerservaring en interface
+
+9. **Caching systeem voor modellen**
+   - Cachen van modelresultaten voor betere performance
+   - Opslaan van getrainde modellen voor hergebruik
+
+10. **Deployment instructies**
+    - Handleiding voor deployment naar productie
+    - Docker configuratie
+    - Cloud deployment opties
