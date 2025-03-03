@@ -104,19 +104,53 @@ De applicatie wordt opgedeeld in de volgende modules:
 ## 4. Web Interface
 
 ### app.py
-- **Status**: Basisimplementatie aanwezig
-- **Functionaliteit**: Hoofdmodule voor de webapplicatie
+- **Status**: Volledige implementatie aanwezig (PR #12)
+- **Functionaliteit**: 
+  - Hoofdmodule voor de Flask webapplicatie
+  - Routering voor alle pagina's (/, /features, /train, /predict, /results)
+  - API endpoints voor modelgegevens en voorspellingen
+  - Error handling voor 404 en 500 fouten
+  - Integratie met alle model en data componenten
 - **Afhankelijkheid**: Alle andere modules
 
-### dashboard.py
-- **Status**: Basisimplementatie aanwezig
-- **Functionaliteit**: Module voor het visualiseren van resultaten en model performance
-- **Afhankelijkheid**: model_evaluator.py, app.py
-
 ### model_interface.py
-- **Status**: Basisimplementatie aanwezig
-- **Functionaliteit**: Interfacemodule die de interactie tussen webapplicatie en modelmodules afhandelt
-- **Afhankelijkheid**: model_trainer.py, model_evaluator.py, feature_selector.py
+- **Status**: Volledige implementatie aanwezig (PR #12)
+- **Functionaliteit**: 
+  - Interface tussen web app en modellen
+  - Laden en voorbereiden van data
+  - Trainen van modellen met hyperparameter tuning
+  - Voorspellen van overlevingskansen
+  - Ophalen van model performance metrics
+  - Feature importance visualisatie
+  - Opslaan en laden van getrainde modellen
+- **Afhankelijkheid**: data_loader.py, data_preprocessor.py, alle model modules, feature_creator.py, feature_selector.py
+
+### dashboard.py
+- **Status**: Basisimplementatie aanwezig (PR #12)
+- **Functionaliteit**: 
+  - Creëren van visualisaties voor data en model performance
+  - Layout voor data exploration dashboard
+  - Interactieve plots voor feature analyse
+- **Afhankelijkheid**: data_loader.py, model_evaluator.py
+
+### Templates
+- **Status**: Volledige implementatie aanwezig (PR #12)
+- **Functionaliteit**:
+  - base.html: Basis template met layout, navigatie en gemeenschappelijke elementen
+  - index.html: Homepage met uitleg en navigatie
+  - features.html: Feature exploration pagina met visualisaties
+  - train.html: Model training pagina met model selectie en parameter configuratie
+  - predict.html: Voorspellingspagina met invoerformulier voor passagiergegevens
+  - results.html: Resultaatpagina met model vergelijkingen
+  - 404.html en 500.html: Error pagina's
+- **Afhankelijkheid**: Geen
+
+### Static Files
+- **Status**: Volledige implementatie aanwezig (PR #12)
+- **Functionaliteit**:
+  - CSS styling voor een consistent en gebruiksvriendelijk design
+  - JavaScript voor interactieve elementen en visualisaties
+- **Afhankelijkheid**: Geen
 
 ## 5. Utilities
 
