@@ -54,10 +54,12 @@
    - Requirements bestand voor dependencies ✓
    - Status: Afgerond (PR #16)
 
-10. **Testen**
-    - Unit tests schrijven voor de belangrijkste functionaliteiten
-    - End-to-end testen van de applicatie
-    - Status: Gedeeltelijk geïmplementeerd (tests voor modelling, feature engineering en submission generator modules aanwezig)
+10. **Testen** ✓
+    - Unit tests schrijven voor de belangrijkste functionaliteiten ✓
+    - End-to-end testen van de applicatie ✓
+    - Integratie tests ✓
+    - Test coverage configuratie ✓
+    - Status: Afgerond (#17)
 
 ## Nice-to-haves
 
@@ -110,4 +112,4 @@
     - Docker configuratie
     - Cloud deployment opties
 
-Alle must-have stappen zijn nu afgerond of in de afrondingsfase via PR #16 voor de documentatie. De laatste stap is het voltooien van de testen. Na afronding van alle must-haves is de applicatie volledig functioneel voor het voorspellen van Titanic overlevenden en het genereren van Kaggle submissions. De nice-to-have functies zouden verdere verbeteringen bieden, maar zijn niet noodzakelijk voor de basiswerking van de applicatie.
+Alle must-have stappen zijn nu afgerond. De applicatie is volledig functioneel voor het voorspellen van Titanic overlevenden en het genereren van Kaggle submissions. De laatste toevoeging was het voltooien van de uitgebreide testen in PR #17 en het oplossen van een installatie bug in #18. De nice-to-have functies zouden verdere verbeteringen bieden, maar zijn niet noodzakelijk voor de basiswerking van de applicatie.
