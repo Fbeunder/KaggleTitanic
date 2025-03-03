@@ -9,7 +9,7 @@ It uses Flask to create a web application that allows users to interact with the
 import os
 import logging
 import pandas as pd
-from flask import Flask, render_template, request, jsonify, redirect, url_for, flash, session
+from flask import Flask, render_template, request, jsonify, redirect, url_for, flash, session, send_file
 
 from src.web_interface.model_interface import ModelInterface
 from src.data_processing.data_loader import DataLoader
@@ -217,6 +217,84 @@ def create_app():
             return jsonify(comparison_data)
         except Exception as e:
             logger.error(f"Error in model-comparison API: {e}")
+            return jsonify({'error': str(e)}), 400
+            
+    @app.route('/api/generate-submission', methods=['POST'])
+    def generate_submission():
+        """API endpoint for generating Kaggle submission files."""
+        try:
+            # Get model name from request
+            model_name = request.form.get('model_name')
+            file_format = request.form.get('format', 'csv')
+            custom_file_name = request.form.get('file_name')
+            
+            # Generate the submission file
+            result = model_interface.generate_kaggle_submission(
+                model_name=model_name,
+                custom_file_name=custom_file_name,
+                format=file_format
+            )
+            
+            if not result['success']:
+                return jsonify({
+                    'success': False,
+                    'error': result.get('error', 'Unknown error generating submission')
+                }), 400
+            
+            return jsonify({
+                'success': True,
+                'file_path': result['file_path'],
+                'model_name': result['model_name'],
+                'validation': result['validation']
+            })
+        except Exception as e:
+            logger.error(f"Error in generate-submission API: {e}")
+            return jsonify({'success': False, 'error': str(e)}), 400
+    
+    @app.route('/api/list-submissions')
+    def list_submissions():
+        """API endpoint for listing available submission files."""
+        try:
+            submissions = model_interface.list_available_submissions()
+            return jsonify({'submissions': submissions})
+        except Exception as e:
+            logger.error(f"Error in list-submissions API: {e}")
+            return jsonify({'error': str(e)}), 400
+    
+    @app.route('/api/download-submission')
+    def download_submission():
+        """API endpoint for downloading a submission file."""
+        try:
+            file_path = request.args.get('file_path')
+            if not file_path or not os.path.exists(file_path):
+                return jsonify({'error': 'File not found'}), 404
+            
+            return send_file(file_path, as_attachment=True)
+        except Exception as e:
+            logger.error(f"Error in download-submission API: {e}")
+            return jsonify({'error': str(e)}), 400
+    
+    @app.route('/api/compare-submissions', methods=['POST'])
+    def compare_submissions():
+        """API endpoint for comparing multiple submission files."""
+        try:
+            # Get submission file paths from request
+            submission_paths = request.json.get('submission_paths', [])
+            if not submission_paths or len(submission_paths) < 2:
+                return jsonify({'error': 'Need at least two submission files to compare'}), 400
+            
+            # Check if all files exist
+            missing_files = [path for path in submission_paths if not os.path.exists(path)]
+            if missing_files:
+                return jsonify({
+                    'error': f'The following submission files were not found: {missing_files}'
+                }), 404
+            
+            # Use submission generator to compare the files
+            comparison_result = model_interface.submission_generator.compare_submissions(submission_paths)
+            return jsonify(comparison_result)
+        except Exception as e:
+            logger.error(f"Error in compare-submissions API: {e}")
             return jsonify({'error': str(e)}), 400
     
     # Error handlers
