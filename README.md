@@ -35,7 +35,7 @@ cd KaggleTitanic
 2. Maak een virtuele omgeving aan:
 ```
 python -m venv venv
-source venv/bin/activate  # Op Windows: venv\Scripts\activate
+source venv/bin/activate  # Op Windows: venv\\Scripts\\activate
 ```
 
 3. Installeer de vereiste packages:
@@ -55,10 +55,16 @@ pip install -r requirements.txt
 
 ### Web Interface
 
-Start de web interface:
+Start de web interface met het nieuwe run.py script:
 
 ```
-python src/web_interface/app.py
+python run.py
+```
+
+Of als alternatief kun je het volgende gebruiken (indien je Python path correct is geconfigureerd):
+
+```
+python -m src.web_interface.app
 ```
 
 Open vervolgens je browser en ga naar `http://localhost:5000`.
