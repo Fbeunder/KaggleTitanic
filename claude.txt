@@ -76,7 +76,7 @@ De applicatie wordt opgedeeld in de volgende modules:
 ## 3. Feature Engineering
 
 ### feature_creator.py
-- **Status**: Volledige implementatie aanwezig (PR #10)
+- **Status**: Volledige implementatie aanwezig
 - **Functionaliteit**: 
   - Verantwoordelijk voor het creëren van nieuwe features op basis van bestaande features
   - Extraheren van titels uit namen en categoriseren
@@ -89,7 +89,7 @@ De applicatie wordt opgedeeld in de volgende modules:
 - **Afhankelijkheid**: data_preprocessor.py
 
 ### feature_selector.py
-- **Status**: Volledige implementatie aanwezig (PR #10)
+- **Status**: Volledige implementatie aanwezig
 - **Functionaliteit**: 
   - Verantwoordelijk voor feature selectie en importance ranking
   - Selecteren van features met statistische tests (SelectKBest)
@@ -104,7 +104,7 @@ De applicatie wordt opgedeeld in de volgende modules:
 ## 4. Web Interface
 
 ### app.py
-- **Status**: Volledige implementatie aanwezig (PR #12)
+- **Status**: Volledige implementatie aanwezig
 - **Functionaliteit**: 
   - Hoofdmodule voor de Flask webapplicatie
   - Routering voor alle pagina's (/, /features, /train, /predict, /results)
@@ -115,7 +115,7 @@ De applicatie wordt opgedeeld in de volgende modules:
 - **Afhankelijkheid**: Alle andere modules
 
 ### model_interface.py
-- **Status**: Volledige implementatie aanwezig (PR #12)
+- **Status**: Volledige implementatie aanwezig
 - **Functionaliteit**: 
   - Interface tussen web app en modellen
   - Laden en voorbereiden van data
@@ -129,7 +129,7 @@ De applicatie wordt opgedeeld in de volgende modules:
 - **Afhankelijkheid**: data_loader.py, data_preprocessor.py, alle model modules, feature_creator.py, feature_selector.py, submission_generator.py
 
 ### dashboard.py
-- **Status**: Basisimplementatie aanwezig (PR #12)
+- **Status**: Basisimplementatie aanwezig
 - **Functionaliteit**: 
   - Creëren van visualisaties voor data en model performance
   - Layout voor data exploration dashboard
@@ -137,7 +137,7 @@ De applicatie wordt opgedeeld in de volgende modules:
 - **Afhankelijkheid**: data_loader.py, model_evaluator.py
 
 ### Templates
-- **Status**: Volledige implementatie aanwezig (PR #12)
+- **Status**: Volledige implementatie aanwezig
 - **Functionaliteit**:
   - base.html: Basis template met layout, navigatie en gemeenschappelijke elementen
   - index.html: Homepage met uitleg en navigatie
@@ -149,7 +149,7 @@ De applicatie wordt opgedeeld in de volgende modules:
 - **Afhankelijkheid**: Geen
 
 ### Static Files
-- **Status**: Volledige implementatie aanwezig (PR #12)
+- **Status**: Volledige implementatie aanwezig
 - **Functionaliteit**:
   - CSS styling voor een consistent en gebruiksvriendelijk design
   - JavaScript voor interactieve elementen en visualisaties
@@ -168,7 +168,7 @@ De applicatie wordt opgedeeld in de volgende modules:
 - **Afhankelijkheid**: Geen
 
 ### submission_generator.py
-- **Status**: Volledige implementatie aanwezig (PR #13)
+- **Status**: Volledige implementatie aanwezig
 - **Functionaliteit**: 
   - Genereren van submission files in het juiste formaat voor Kaggle
   - Valideren van submissions volgens Kaggle requirements
