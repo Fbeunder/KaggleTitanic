@@ -76,13 +76,29 @@ De applicatie wordt opgedeeld in de volgende modules:
 ## 3. Feature Engineering
 
 ### feature_creator.py
-- **Status**: Basisimplementatie aanwezig
-- **Functionaliteit**: Verantwoordelijk voor het creëren van nieuwe features op basis van bestaande features
+- **Status**: Volledige implementatie aanwezig (PR #10)
+- **Functionaliteit**: 
+  - Verantwoordelijk voor het creëren van nieuwe features op basis van bestaande features
+  - Extraheren van titels uit namen en categoriseren
+  - Creëren van family size en family type features
+  - Extraheren van cabin deck en location informatie
+  - Categoriseren van leeftijden
+  - Categoriseren van ticketprijzen
+  - Creëren van feature interacties en combinaties
+  - Convenience methode om alle features in één keer te creëren
 - **Afhankelijkheid**: data_preprocessor.py
 
 ### feature_selector.py
-- **Status**: Basisimplementatie aanwezig
-- **Functionaliteit**: Verantwoordelijk voor feature selectie en importance ranking
+- **Status**: Volledige implementatie aanwezig (PR #10)
+- **Functionaliteit**: 
+  - Verantwoordelijk voor feature selectie en importance ranking
+  - Selecteren van features met statistische tests (SelectKBest)
+  - Selecteren van features met recursieve feature eliminatie (RFE)
+  - Automatische selectie van optimaal aantal features (RFECV)
+  - Berekenen van feature importance met verschillende methoden
+  - Visualiseren van feature importance
+  - Detecteren en verwijderen van hoog gecorreleerde features
+  - Zoeken naar optimale feature subset
 - **Afhankelijkheid**: feature_creator.py, model_trainer.py
 
 ## 4. Web Interface
