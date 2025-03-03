@@ -215,7 +215,7 @@ De applicatie wordt opgedeeld in de volgende modules:
 - **Afhankelijkheid**: Geen
 
 ### requirements.txt
-- **Status**: Update nodig voor Python 3.13 compatibiliteit (PR #21)
+- **Status**: Volledige implementatie aanwezig
 - **Functionaliteit**: 
   - Specifieke versies van alle dependencies
   - Python versie-vereisten
@@ -270,9 +270,20 @@ De applicatie wordt opgedeeld in de volgende modules:
 ## 9. Compatibiliteit en Versiebeheer
 
 ### Python Versie Compatibiliteit
-- **Status**: Update nodig voor Python 3.13 (PR #21)
+- **Status**: Volledige implementatie aanwezig
 - **Functionaliteit**:
   - Compatibel met Python 3.8 tot en met 3.13
   - Speciaal voor Python 3.13 gebruikers: installeer eerst pip, setuptools>=69.0.0 en wheel
   - Alle code is getest met Python 3.13.1 en ouder
 - **Afhankelijkheid**: requirements.txt
+
+## 10. Applicatie Starters
+
+### run.py
+- **Status**: In ontwikkeling (PR #24)
+- **Functionaliteit**:
+  - Hoofdmodule voor het starten van de applicatie vanuit de root directory
+  - Configuratie van Python path om module import problemen te voorkomen
+  - Lost het "ModuleNotFoundError: No module named 'src'" probleem op
+  - Biedt een eenvoudige en robuste manier om de applicatie te starten
+- **Afhankelijkheid**: src.web_interface.app
