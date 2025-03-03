@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}500 - Server Error{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 text-center py-5">
+        <div class="error-template">
+            <h1 class="display-1">
+                <i class="fas fa-bug text-danger"></i> 500
+            </h1>
+            <h2>Internal Server Error</h2>
+            <div class="error-details mb-4">
+                Sorry, something went wrong on our end. We're working to fix the issue.
+            </div>
+            <div class="error-actions">
+                <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg me-2">
+                    <i class="fas fa-home me-1"></i>Back to Home
+                </a>
+                <a href="javascript:history.back()" class="btn btn-outline-secondary btn-lg">
+                    <i class="fas fa-arrow-left me-1"></i>Go Back
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-8 offset-md-2">
+        <div class="card shadow">
+            <div class="card-header bg-light">
+                <h5 class="card-title mb-0">What happened?</h5>
+            </div>
+            <div class="card-body">
+                <p>
+                    This is a 500 error, which means there was an unexpected condition in the server that prevented 
+                    it from fulfilling the request. This could be due to:
+                </p>
+                <ul>
+                    <li>A temporary overload or maintenance of the server</li>
+                    <li>An error in the application processing your request</li>
+                    <li>An issue with data processing or database connections</li>
+                </ul>
+                <p>
+                    The error has been logged and we'll work to address it as soon as possible. 
+                    Please try again later or try a different action.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
