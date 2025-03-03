@@ -591,14 +591,46 @@ window.addEventListener('error', function(e) {
 <script src="{{ url_for('static', filename='js/debug-visualization.js') }}"></script>
 <!-- Include the results JavaScript file -->
 <script src="{{ url_for('static', filename='js/results.js') }}"></script>
-<!-- Fix script to ensure visualizations load -->
+<!-- Add initialization script to automatically show details for newly trained model -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Check if visualizations loaded correctly
+    // Check if there's a selected model from the URL or session
+    const urlParams = new URLSearchParams(window.location.search);
+    const selectedModel = urlParams.get('model');
+    
+    if (selectedModel) {
+        console.log(`Auto-showing details for model: ${selectedModel}`);
+        
+        // We need to wait for the main results.js script to initialize
+        setTimeout(function() {
+            // Find the 'View Details' button for this model and trigger a click
+            const detailsButtons = document.querySelectorAll('.view-details-btn');
+            let found = false;
+            
+            detailsButtons.forEach(button => {
+                if (button.getAttribute('data-model') === selectedModel) {
+                    button.click();
+                    found = true;
+                }
+            });
+            
+            if (!found) {
+                // Create a custom event to show model details
+                // This will be handled by the showModelDetails function in results.js
+                const event = new CustomEvent('showModelDetails', { detail: { modelName: selectedModel } });
+                document.dispatchEvent(event);
+                
+                console.log(`Button for model ${selectedModel} not found, dispatched custom event`);
+            }
+        }, 1000); // Wait 1 second for other scripts to initialize
+    }
+    
+    // Fix script to ensure visualizations load
     setTimeout(function() {
-        if (document.querySelector('#modal-confusion-matrix').innerHTML.includes('Confusion matrix would be shown here') ||
-            document.querySelector('#modal-roc-curve').innerHTML.includes('ROC curve would be shown here') ||
-            document.querySelector('#modal-feature-importance').innerHTML.includes('Feature importance would be shown here')) {
+        if (!document.getElementById('modal-confusion-matrix') || 
+            document.getElementById('modal-confusion-matrix').innerHTML.includes('Confusion matrix would be shown here') ||
+            document.getElementById('modal-roc-curve').innerHTML.includes('ROC curve would be shown here') ||
+            document.getElementById('modal-feature-importance').innerHTML.includes('Feature importance would be shown here')) {
             
             console.error('Visualizations failed to load correctly, attempting fallback rendering');
             
@@ -607,21 +639,29 @@ document.addEventListener('DOMContentLoaded', function() {
                 renderModelVisualizations();
             } else {
                 // Fallback rendering if function doesn't exist
-                document.querySelector('#modal-confusion-matrix').innerHTML = `
-                    <div class="alert alert-warning">
-                        <strong>Visualization could not be loaded.</strong><br>
-                        Please try refreshing the page or checking the console for errors.
-                    </div>`;
-                document.querySelector('#modal-roc-curve').innerHTML = `
-                    <div class="alert alert-warning">
-                        <strong>Visualization could not be loaded.</strong><br>
-                        Please try refreshing the page or checking the console for errors.
-                    </div>`;
-                document.querySelector('#modal-feature-importance').innerHTML = `
-                    <div class="alert alert-warning">
-                        <strong>Visualization could not be loaded.</strong><br>
-                        Please try refreshing the page or checking the console for errors.
-                    </div>`;
+                if (document.getElementById('modal-confusion-matrix')) {
+                    document.getElementById('modal-confusion-matrix').innerHTML = `
+                        <div class="alert alert-warning">
+                            <strong>Visualization could not be loaded.</strong><br>
+                            Please try refreshing the page or checking the console for errors.
+                        </div>`;
+                }
+                
+                if (document.getElementById('modal-roc-curve')) {
+                    document.getElementById('modal-roc-curve').innerHTML = `
+                        <div class="alert alert-warning">
+                            <strong>Visualization could not be loaded.</strong><br>
+                            Please try refreshing the page or checking the console for errors.
+                        </div>`;
+                }
+                
+                if (document.getElementById('modal-feature-importance')) {
+                    document.getElementById('modal-feature-importance').innerHTML = `
+                        <div class="alert alert-warning">
+                            <strong>Visualization could not be loaded.</strong><br>
+                            Please try refreshing the page or checking the console for errors.
+                        </div>`;
+                }
             }
             
             // Show error message
