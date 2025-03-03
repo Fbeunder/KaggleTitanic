@@ -131,8 +131,11 @@ def create_app():
                 )
                 
                 if success:
+                    # Store the trained model name in session for the results page
+                    session['last_trained_model'] = model_type
+                    
                     flash(f"Successfully trained {model_type} model!", "success")
-                    return redirect(url_for('results'))
+                    return redirect(url_for('results', model=model_type))
                 else:
                     flash(f"Error training {model_type} model. Please check logs.", "error")
             except Exception as e:
@@ -179,8 +182,13 @@ def create_app():
     @app.route('/results')
     def results():
         """Model results page route."""
-        # In a real application, this would retrieve actual model results from the model_interface
-        return render_template('results.html')
+        # Get the model parameter from URL or session
+        model_name = request.args.get('model') or session.get('last_trained_model')
+        
+        # Log the model name we're trying to display
+        logger.info(f"Showing results page for model: {model_name}")
+        
+        return render_template('results.html', selected_model=model_name)
     
     @app.route('/api/feature-importance')
     def feature_importance():
@@ -254,10 +262,15 @@ def create_app():
         try:
             model_name = request.args.get('model', 'random_forest')
             
+            # Log that we're getting details for a specific model
+            logger.info(f"Getting details for model: {model_name}")
+            
             # Get model performance data
             model_data = model_interface.get_model_performance(model_name)
             
             if model_data:
+                logger.info(f"Found model data for {model_name}")
+                
                 # Get model parameters and metrics
                 params = model_data.get('params', {})
                 metrics = model_data.get('metrics', {})
@@ -299,6 +312,8 @@ def create_app():
                 
                 return jsonify(response)
             else:
+                logger.warning(f"No model data found for {model_name}, using mock data")
+                
                 # Fallback to mock data if model not found
                 # This should be tailored to the specific model types in the application
                 mock_confusion_matrix = [[44, 7], [9, 15]]
