@@ -1,0 +1,88 @@
+# Projectoverzicht
+De Titanic voorspeller is een applicatie die machine learning modellen gebruikt om te voorspellen welke passagiers de Titanic-ramp zouden overleven op basis van hun demografische en reisgegevens. Het doel is om verschillende voorspellingsmodellen te trainen en te evalueren met behulp van de Kaggle Titanic dataset, en gebruikers in staat te stellen deze modellen te vergelijken en feature engineering toe te passen via een web interface.
+
+# Architectuur
+De applicatie wordt opgedeeld in de volgende modules:
+
+1. **Data Processing**: Modules voor het laden, verwerken en transformeren van de data
+2. **Modelling**: Modules voor het trainen en evalueren van verschillende machine learning modellen
+3. **Feature Engineering**: Modules voor het creëren en selecteren van features
+4. **Web Interface**: Modules voor de web interface waarmee gebruikers kunnen interacteren met de modellen
+5. **Utilities**: Hulpmodules voor algemene functionaliteiten
+
+# Modules
+
+## 1. Data Processing
+
+### data_loader.py
+- **Status**: Nog niet gestart
+- **Functionaliteit**: Verantwoordelijk voor het laden van de train.csv en test.csv datasets
+- **Afhankelijkheid**: Geen
+
+### data_preprocessor.py
+- **Status**: Nog niet gestart
+- **Functionaliteit**: Verantwoordelijk voor het verwerken en opschonen van de data, inclusief missing value imputation en feature encoding
+- **Afhankelijkheid**: data_loader.py
+
+## 2. Modelling
+
+### model_factory.py
+- **Status**: Nog niet gestart
+- **Functionaliteit**: Factory pattern implementatie voor het creëren van verschillende machine learning modellen
+- **Afhankelijkheid**: Geen
+
+### model_trainer.py
+- **Status**: Nog niet gestart
+- **Functionaliteit**: Verantwoordelijk voor het trainen en cross-valideren van modellen
+- **Afhankelijkheid**: model_factory.py, data_preprocessor.py
+
+### model_evaluator.py
+- **Status**: Nog niet gestart
+- **Functionaliteit**: Verantwoordelijk voor het evalueren van modellen op basis van verschillende metrics
+- **Afhankelijkheid**: model_trainer.py
+
+## 3. Feature Engineering
+
+### feature_creator.py
+- **Status**: Nog niet gestart
+- **Functionaliteit**: Verantwoordelijk voor het creëren van nieuwe features op basis van bestaande features
+- **Afhankelijkheid**: data_preprocessor.py
+
+### feature_selector.py
+- **Status**: Nog niet gestart
+- **Functionaliteit**: Verantwoordelijk voor feature selectie en importance ranking
+- **Afhankelijkheid**: feature_creator.py, model_trainer.py
+
+## 4. Web Interface
+
+### app.py
+- **Status**: Nog niet gestart
+- **Functionaliteit**: Hoofdmodule voor de webapplicatie
+- **Afhankelijkheid**: Alle andere modules
+
+### dashboard.py
+- **Status**: Nog niet gestart
+- **Functionaliteit**: Module voor het visualiseren van resultaten en model performance
+- **Afhankelijkheid**: model_evaluator.py, app.py
+
+### model_interface.py
+- **Status**: Nog niet gestart
+- **Functionaliteit**: Interfacemodule die de interactie tussen webapplicatie en modelmodules afhandelt
+- **Afhankelijkheid**: model_trainer.py, model_evaluator.py, feature_selector.py
+
+## 5. Utilities
+
+### config.py
+- **Status**: Nog niet gestart
+- **Functionaliteit**: Configuratie-instellingen voor de applicatie
+- **Afhankelijkheid**: Geen
+
+### utils.py
+- **Status**: Nog niet gestart
+- **Functionaliteit**: Algemene hulpfuncties die door meerdere modules gebruikt kunnen worden
+- **Afhankelijkheid**: Geen
+
+### submission_generator.py
+- **Status**: Nog niet gestart
+- **Functionaliteit**: Hulpmodule voor het genereren van de submission file in het juiste formaat voor Kaggle
+- **Afhankelijkheid**: model_evaluator.py
