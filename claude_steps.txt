@@ -72,11 +72,18 @@
     - Implementeren van betere versie-specificatie (>= format) voor toekomstige compatibiliteit ✓
     - Status: Afgerond (PR #21)
 
-13. **Fix app.py module import fout** 🔄
-    - Fix probleem waarbij `python src/web_interface/app.py` een ModuleNotFoundError geeft 🔄
-    - Maak een run.py bestand in de hoofdmap dat de Python path correct instelt 🔄
-    - Documenteer de nieuwe manier van starten in de README 🔄
-    - Status: In Progress (PR #24)
+13. **Fix app.py module import fout** ✓
+    - Fix probleem waarbij `python src/web_interface/app.py` een ModuleNotFoundError geeft ✓
+    - Maak een run.py bestand in de hoofdmap dat de Python path correct instelt ✓
+    - Documenteer de nieuwe manier van starten in de README ✓
+    - Status: Afgerond (PR #24)
+
+14. **Fix error bij klikken op Explore Data** 🔄
+    - Fix TypeError wanneer train.csv bestand niet gevonden kan worden ✓
+    - Verbeter error handling in app.py ✓
+    - Verbeter template features.html om controles op ontbrekende statistieken uit te voeren ✓
+    - Toon nuttige feedback aan gebruikers wanneer data niet geladen kan worden ✓
+    - Status: In Progress (PR #26)
 
 ## Nice-to-haves
 
@@ -129,6 +136,17 @@
     - Docker configuratie
     - Cloud deployment opties
 
-De must-have functionaliteiten zijn bijna allemaal afgerond. Er is nog een lopende PR (#24) om een probleem met het starten van de app via `python src/web_interface/app.py` op te lossen. Zodra deze pull request is goedgekeurd en gemerged, zijn alle must-have functionaliteiten compleet en is de applicatie volledig functioneel.
+11. **Data uploading**
+    - Functionaliteit voor gebruikers om eigen data te uploaden
+    - Automatische validatie van geüploade data
+    - Custom voorspellingen op eigen datasets
+
+12. **Verbeterde foutafhandeling**
+    - Robuuste error handling voor ontbrekende bestanden
+    - Nuttige foutmeldingen voor gebruikers
+    - Logging van fouten voor troubleshooting
+    - Status: Gedeeltelijk geïmplementeerd in PR #26 voor de 'Explore Data' functionaliteit
+
+De must-have functionaliteiten zijn bijna allemaal afgerond. Er is nog een lopende PR (#26) om een probleem met de 'Explore Data' functionaliteit op te lossen wanneer het train.csv bestand ontbreekt. Zodra deze pull request is goedgekeurd en gemerged, zijn alle must-have functionaliteiten compleet en is de applicatie volledig functioneel voor basisgebruik.
 
 De nice-to-have functies zouden verdere verbeteringen bieden, maar zijn niet noodzakelijk voor de basiswerking van de applicatie.
