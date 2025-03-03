@@ -109,6 +109,7 @@ De applicatie wordt opgedeeld in de volgende modules:
   - Hoofdmodule voor de Flask webapplicatie
   - Routering voor alle pagina's (/, /features, /train, /predict, /results)
   - API endpoints voor modelgegevens en voorspellingen
+  - API endpoints voor Kaggle submissions
   - Error handling voor 404 en 500 fouten
   - Integratie met alle model en data componenten
 - **Afhankelijkheid**: Alle andere modules
@@ -123,7 +124,9 @@ De applicatie wordt opgedeeld in de volgende modules:
   - Ophalen van model performance metrics
   - Feature importance visualisatie
   - Opslaan en laden van getrainde modellen
-- **Afhankelijkheid**: data_loader.py, data_preprocessor.py, alle model modules, feature_creator.py, feature_selector.py
+  - Genereren en beheren van Kaggle submissions
+  - Vergelijken van modellen en submissions
+- **Afhankelijkheid**: data_loader.py, data_preprocessor.py, alle model modules, feature_creator.py, feature_selector.py, submission_generator.py
 
 ### dashboard.py
 - **Status**: Basisimplementatie aanwezig (PR #12)
@@ -141,7 +144,7 @@ De applicatie wordt opgedeeld in de volgende modules:
   - features.html: Feature exploration pagina met visualisaties
   - train.html: Model training pagina met model selectie en parameter configuratie
   - predict.html: Voorspellingspagina met invoerformulier voor passagiergegevens
-  - results.html: Resultaatpagina met model vergelijkingen
+  - results.html: Resultaatpagina met model vergelijkingen en submission export
   - 404.html en 500.html: Error pagina's
 - **Afhankelijkheid**: Geen
 
@@ -165,9 +168,15 @@ De applicatie wordt opgedeeld in de volgende modules:
 - **Afhankelijkheid**: Geen
 
 ### submission_generator.py
-- **Status**: Basisimplementatie aanwezig
-- **Functionaliteit**: Hulpmodule voor het genereren van de submission file in het juiste formaat voor Kaggle
-- **Afhankelijkheid**: model_evaluator.py
+- **Status**: Volledige implementatie aanwezig (PR #13)
+- **Functionaliteit**: 
+  - Genereren van submission files in het juiste formaat voor Kaggle
+  - Valideren van submissions volgens Kaggle requirements
+  - Vergelijken van verschillende model submissions
+  - Visualiseren van predictie distributies
+  - Exporteren en downloaden van submission bestanden
+  - Beheren van submission geschiedenis en metadata
+- **Afhankelijkheid**: model_evaluator.py, data_loader.py
 
 ## 6. Notebooks
 

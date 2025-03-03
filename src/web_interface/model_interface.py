@@ -20,6 +20,7 @@ from src.modelling.model_trainer import ModelTrainer
 from src.modelling.model_evaluator import ModelEvaluator
 from src.feature_engineering.feature_creator import FeatureCreator
 from src.feature_engineering.feature_selector import FeatureSelector
+from src.utilities.submission_generator import SubmissionGenerator
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -50,6 +51,7 @@ class ModelInterface:
         self.model_factory = ModelFactory()
         self.model_trainer = ModelTrainer()
         self.model_evaluator = ModelEvaluator()
+        self.submission_generator = SubmissionGenerator()
         
         self.train_data = None
         self.test_data = None
@@ -285,6 +287,148 @@ class ModelInterface:
         except Exception as e:
             logger.error(f"Error in predict_survival: {e}")
             return None
+    
+    def generate_kaggle_submission(self, model_name, description=None, file_name=None):
+        """
+        Generate a Kaggle submission file for the specified model.
+        
+        Args:
+            model_name (str): Name of the model to use for submission.
+            description (str, optional): Description of the submission for tracking.
+            file_name (str, optional): Custom file name for the submission.
+            
+        Returns:
+            dict: Submission details including path and validation results.
+        """
+        logger.info(f"Generating Kaggle submission for model {model_name}")
+        
+        try:
+            # Ensure data is prepared
+            if self.X_test is None:
+                success = self.prepare_data_for_training()
+                if not success:
+                    logger.error("Failed to prepare data for submission")
+                    return {
+                        'success': False,
+                        'error': "Failed to prepare data for submission"
+                    }
+            
+            # Get the model
+            model = self._get_model(model_name)
+            if model is None:
+                logger.error(f"Model {model_name} not found")
+                return {
+                    'success': False,
+                    'error': f"Model {model_name} not found or could not be loaded"
+                }
+            
+            # Generate submission
+            submission_path = self.submission_generator.generate_submission(
+                model, 
+                self.X_test, 
+                file_name=file_name,
+                description=description
+            )
+            
+            # Validate submission
+            validation_results = self.submission_generator.validate_submission(submission_path)
+            
+            submission_details = {
+                'success': True,
+                'path': submission_path,
+                'file_name': os.path.basename(submission_path),
+                'model_name': model_name,
+                'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                'validation': validation_results
+            }
+            
+            logger.info(f"Submission generated successfully: {submission_path}")
+            return submission_details
+        except Exception as e:
+            logger.error(f"Error generating Kaggle submission: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+    
+    def list_submissions(self):
+        """
+        List all available submission files.
+        
+        Returns:
+            pandas.DataFrame: List of submission files with metadata.
+        """
+        try:
+            submissions_df = self.submission_generator.list_submissions()
+            return submissions_df
+        except Exception as e:
+            logger.error(f"Error listing submissions: {e}")
+            return pd.DataFrame()
+    
+    def compare_model_submissions(self, model_names):
+        """
+        Generate and compare submissions from different models.
+        
+        Args:
+            model_names (list): List of model names to compare.
+            
+        Returns:
+            dict: Comparison results.
+        """
+        logger.info(f"Comparing submissions for models: {model_names}")
+        
+        try:
+            # Ensure data is prepared
+            if self.X_test is None:
+                success = self.prepare_data_for_training()
+                if not success:
+                    logger.error("Failed to prepare data for submission comparison")
+                    return {
+                        'success': False,
+                        'error': "Failed to prepare data for submission comparison"
+                    }
+            
+            # Generate submissions for each model
+            submission_paths = []
+            for model_name in model_names:
+                model = self._get_model(model_name)
+                if model is None:
+                    logger.warning(f"Model {model_name} not found, skipping")
+                    continue
+                
+                # Generate submission
+                file_name = f"comparison_{model_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+                submission_path = self.submission_generator.generate_submission(
+                    model, 
+                    self.X_test, 
+                    file_name=file_name,
+                    description=f"Generated for model comparison: {model_name}"
+                )
+                submission_paths.append(submission_path)
+            
+            if not submission_paths:
+                return {
+                    'success': False,
+                    'error': "No models were found for comparison"
+                }
+            
+            # Compare submissions
+            comparison_results = self.submission_generator.compare_submissions(
+                submission_paths=submission_paths, 
+                names=model_names
+            )
+            
+            return {
+                'success': True,
+                'comparison': comparison_results,
+                'submissions': submission_paths
+            }
+        except Exception as e:
+            logger.error(f"Error comparing model submissions: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
     
     def get_model_performance(self, model_name=None):
         """
