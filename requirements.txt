@@ -1,4 +1,5 @@
-# Python 3.8 or higher required
+# Python 3.8 of hoger vereist, getest t/m Python 3.12
+# Voor Python 3.13 gebruikers: installeer eerst setuptools met: pip install setuptools
 
 # Data processing & analysis
 pandas==1.5.3
@@ -8,7 +9,7 @@ scikit-learn==1.2.2
 # Machine learning
 xgboost==1.7.6
 lightgbm==3.3.5
-shap==0.41.0  # For model interpretability
+shap==0.41.0  # Voor model interpretability
 
 # Visualization
 matplotlib==3.7.1
@@ -22,8 +23,8 @@ flask==2.3.2
 
 # Utilities
 python-dotenv==1.0.0
-joblib==1.2.0  # For model serialization
-tqdm==4.65.0   # For progress bars
+joblib==1.2.0  # Voor model serialization
+tqdm==4.65.0   # Voor progress bars
 
 # Testing
 pytest==7.3.1
