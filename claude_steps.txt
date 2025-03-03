@@ -78,12 +78,19 @@
     - Documenteer de nieuwe manier van starten in de README ✓
     - Status: Afgerond (PR #24)
 
-14. **Fix error bij klikken op Explore Data** 🔄
+14. **Fix error bij klikken op Explore Data** ✓
     - Fix TypeError wanneer train.csv bestand niet gevonden kan worden ✓
     - Verbeter error handling in app.py ✓
     - Verbeter template features.html om controles op ontbrekende statistieken uit te voeren ✓
     - Toon nuttige feedback aan gebruikers wanneer data niet geladen kan worden ✓
-    - Status: In Progress (PR #26)
+    - Status: Afgerond (PR #26)
+
+15. **Fix missende visualisaties bij model details** ✓
+    - Fix probleem waarbij Confusion Matrix, ROC Curve en Feature Importance niet getoond worden ✓
+    - Implementeer JavaScript voor het renderen van model visualisaties met Plotly ✓
+    - Voeg API endpoints toe voor het ophalen van visualisatiedata ✓
+    - Verbeter error handling en toon laad-indicatoren ✓
+    - Status: Afgerond (PR #28)
 
 ## Nice-to-haves
 
@@ -147,6 +154,6 @@
     - Logging van fouten voor troubleshooting
     - Status: Gedeeltelijk geïmplementeerd in PR #26 voor de 'Explore Data' functionaliteit
 
-De must-have functionaliteiten zijn bijna allemaal afgerond. Er is nog een lopende PR (#26) om een probleem met de 'Explore Data' functionaliteit op te lossen wanneer het train.csv bestand ontbreekt. Zodra deze pull request is goedgekeurd en gemerged, zijn alle must-have functionaliteiten compleet en is de applicatie volledig functioneel voor basisgebruik.
+Alle must-have functionaliteiten zijn nu afgerond. De laatste PR (#28) zorgt voor het oplossen van het probleem met de missende visualisaties bij model details. Alle functionaliteiten die nodig zijn voor de basiswerking van de applicatie zijn nu geïmplementeerd.
 
 De nice-to-have functies zouden verdere verbeteringen bieden, maar zijn niet noodzakelijk voor de basiswerking van de applicatie.
