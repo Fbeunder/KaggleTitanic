@@ -2,15 +2,17 @@
 
 ## Must-haves
 
-1. **Projectbasis opzetten**
-   - Opzetten van de basisstructuur van het project
-   - Aanmaken van de benodigde modules en mappen
-   - Configuratie van de development omgeving
+1. **Projectbasis opzetten** ✓
+   - Opzetten van de basisstructuur van het project ✓
+   - Aanmaken van de benodigde modules en mappen ✓
+   - Configuratie van de development omgeving ✓
+   - Status: Afgerond en PR aangemaakt (#2)
 
 2. **Data processing implementeren**
    - Implementeren van data_loader.py om train.csv en test.csv te laden
    - Implementeren van data_preprocessor.py voor basis data cleaning en transformatie
    - Exploratory Data Analysis om inzicht te krijgen in de data
+   - Status: Nog niet gestart, issue aangemaakt (#3)
 
 3. **Model Factory implementeren**
    - Implementeren van de basis model factory met initiële algoritmes
@@ -90,3 +92,5 @@
     - Handleiding voor deployment naar productie
     - Docker configuratie
     - Cloud deployment opties
+
+Alle vervolgstappen zijn nodig voor de basiswerking van de applicatie. Na afronding van alle must-haves zal de applicatie volledig functioneel zijn voor het voorspellen van Titanic overlevenden en het genereren van Kaggle submissions.
