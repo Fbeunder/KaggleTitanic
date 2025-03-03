@@ -1,0 +1,340 @@
+{% extends "base.html" %}
+
+{% block title %}Predict - Titanic Survival Predictor{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <h1 class="card-title">
+                    <i class="fas fa-magic text-primary me-2"></i>Predict Survival
+                </h1>
+                <p class="lead">
+                    Use trained models to predict survival for passenger information.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-4 mb-4 mb-lg-0">
+        <div class="card shadow h-100">
+            <div class="card-header bg-primary text-white">
+                <h4 class="card-title mb-0">Model Selection</h4>
+            </div>
+            <div class="card-body">
+                <form id="model-selection-form">
+                    <div class="mb-3">
+                        <label for="model-select" class="form-label">Select Model:</label>
+                        <select id="model-select" class="form-select">
+                            <option value="logistic_regression">Logistic Regression (82.5% accuracy)</option>
+                            <option value="random_forest" selected>Random Forest (84.2% accuracy)</option>
+                            <option value="decision_tree">Decision Tree (78.9% accuracy)</option>
+                            <option value="svm">Support Vector Machine (83.1% accuracy)</option>
+                            <option value="knn">K-Nearest Neighbors (80.7% accuracy)</option>
+                            <option value="gradient_boosting">Gradient Boosting (85.6% accuracy)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="prediction-type" class="form-label">Prediction Type:</label>
+                        <select id="prediction-type" class="form-select">
+                            <option value="single">Single Passenger</option>
+                            <option value="batch">Batch Prediction (CSV Upload)</option>
+                        </select>
+                    </div>
+                    
+                    <div id="batch-upload-container" style="display: none;">
+                        <div class="mb-3">
+                            <label for="batch-file" class="form-label">Upload CSV File:</label>
+                            <input type="file" class="form-control" id="batch-file" accept=".csv">
+                            <div class="form-text">File should include passenger data in the same format as the test set.</div>
+                        </div>
+                        <button type="button" class="btn btn-primary w-100" id="btn-batch-predict">
+                            <i class="fas fa-upload me-1"></i>Upload and Predict
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="card-title mb-0">Passenger Information</h4>
+            </div>
+            <div class="card-body">
+                <form id="passenger-form">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="passenger-name" class="form-label">Name:</label>
+                            <input type="text" class="form-control" id="passenger-name" placeholder="e.g., Smith, John">
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="passenger-sex" class="form-label">Gender:</label>
+                            <select id="passenger-sex" class="form-select">
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label for="passenger-age" class="form-label">Age:</label>
+                            <input type="number" class="form-control" id="passenger-age" min="0" max="100" placeholder="e.g., 25">
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label for="passenger-pclass" class="form-label">Passenger Class:</label>
+                            <select id="passenger-pclass" class="form-select">
+                                <option value="1">1st Class</option>
+                                <option value="2">2nd Class</option>
+                                <option value="3" selected>3rd Class</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label for="passenger-fare" class="form-label">Fare:</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" id="passenger-fare" min="0" step="0.01" placeholder="e.g., 15.00">
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label for="passenger-sibsp" class="form-label">Siblings/Spouse:</label>
+                            <input type="number" class="form-control" id="passenger-sibsp" min="0" max="10" value="0">
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label for="passenger-parch" class="form-label">Parents/Children:</label>
+                            <input type="number" class="form-control" id="passenger-parch" min="0" max="10" value="0">
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label for="passenger-embarked" class="form-label">Embarked:</label>
+                            <select id="passenger-embarked" class="form-select">
+                                <option value="C">Cherbourg</option>
+                                <option value="Q">Queenstown</option>
+                                <option value="S" selected>Southampton</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-12">
+                            <label for="passenger-cabin" class="form-label">Cabin (optional):</label>
+                            <input type="text" class="form-control" id="passenger-cabin" placeholder="e.g., C123">
+                        </div>
+                        
+                        <div class="col-md-12 text-center mt-4">
+                            <button type="button" class="btn btn-success" id="btn-predict">
+                                <i class="fas fa-magic me-1"></i>Predict Survival
+                            </button>
+                            <button type="button" class="btn btn-secondary ms-2" id="btn-clear-form">
+                                <i class="fas fa-eraser me-1"></i>Clear Form
+                            </button>
+                            <button type="button" class="btn btn-info ms-2" id="btn-sample-passenger">
+                                <i class="fas fa-user me-1"></i>Sample Passenger
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow" id="prediction-result-card" style="display: none;">
+            <div class="card-header bg-primary text-white">
+                <h4 class="card-title mb-0">Prediction Result</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 text-center">
+                        <div class="prediction-result mb-3">
+                            <div id="prediction-badge" class="badge bg-success p-3 fs-5 mb-2">Survived</div>
+                            <div id="prediction-probability" class="display-4 mb-2">82%</div>
+                            <p>Probability of survival</p>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-header bg-light">
+                                <h6 class="card-title mb-0">Key Factors</h6>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group" id="key-factors">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Gender: Female
+                                        <span class="badge bg-success">+30%</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Passenger Class: 1st
+                                        <span class="badge bg-success">+25%</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Age: 24
+                                        <span class="badge bg-success">+15%</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Family Size: 0
+                                        <span class="badge bg-danger">-10%</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header bg-light">
+                                <h6 class="card-title mb-0">Similar Passengers</h6>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text">Passengers with similar characteristics:</p>
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Age</th>
+                                                <th>Sex</th>
+                                                <th>Class</th>
+                                                <th>Fare</th>
+                                                <th>Embarked</th>
+                                                <th>Survived</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="similar-passengers">
+                                            <tr>
+                                                <td>Brown, Mrs. James Joseph</td>
+                                                <td>25</td>
+                                                <td>Female</td>
+                                                <td>1st</td>
+                                                <td>$63.50</td>
+                                                <td>C</td>
+                                                <td><span class="badge bg-success">Yes</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Graham, Miss. Margaret Edith</td>
+                                                <td>19</td>
+                                                <td>Female</td>
+                                                <td>1st</td>
+                                                <td>$30.00</td>
+                                                <td>S</td>
+                                                <td><span class="badge bg-success">Yes</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Harper, Mrs. Henry Sleeper</td>
+                                                <td>49</td>
+                                                <td>Female</td>
+                                                <td>1st</td>
+                                                <td>$76.73</td>
+                                                <td>C</td>
+                                                <td><span class="badge bg-success">Yes</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-md-12 text-center">
+                        <button type="button" class="btn btn-primary me-2" id="btn-new-prediction">
+                            <i class="fas fa-redo me-1"></i>New Prediction
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="btn-download-result">
+                            <i class="fas fa-download me-1"></i>Download Result
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Toggle batch upload
+    document.getElementById('prediction-type').addEventListener('change', function() {
+        const batchUploadContainer = document.getElementById('batch-upload-container');
+        const passengerForm = document.getElementById('passenger-form');
+        
+        if (this.value === 'batch') {
+            batchUploadContainer.style.display = 'block';
+            passengerForm.style.display = 'none';
+        } else {
+            batchUploadContainer.style.display = 'none';
+            passengerForm.style.display = 'block';
+        }
+    });
+    
+    // Prediction button
+    document.getElementById('btn-predict').addEventListener('click', function() {
+        // In a real app, this would send the form data to the server
+        // and receive a prediction result
+        
+        // For demo, just show the result card
+        document.getElementById('prediction-result-card').style.display = 'block';
+        
+        // Scroll to the result card
+        document.getElementById('prediction-result-card').scrollIntoView({ behavior: 'smooth' });
+    });
+    
+    // Sample passenger button
+    document.getElementById('btn-sample-passenger').addEventListener('click', function() {
+        // Fill the form with sample data
+        document.getElementById('passenger-name').value = 'Smith, Mary';
+        document.getElementById('passenger-sex').value = 'female';
+        document.getElementById('passenger-age').value = '24';
+        document.getElementById('passenger-pclass').value = '1';
+        document.getElementById('passenger-fare').value = '60.00';
+        document.getElementById('passenger-sibsp').value = '0';
+        document.getElementById('passenger-parch').value = '0';
+        document.getElementById('passenger-embarked').value = 'C';
+        document.getElementById('passenger-cabin').value = 'C123';
+    });
+    
+    // Clear form button
+    document.getElementById('btn-clear-form').addEventListener('click', function() {
+        document.getElementById('passenger-form').reset();
+    });
+    
+    // New prediction button
+    document.getElementById('btn-new-prediction').addEventListener('click', function() {
+        document.getElementById('prediction-result-card').style.display = 'none';
+        document.getElementById('passenger-form').reset();
+    });
+    
+    // Download result button (would implement with actual functionality in a real app)
+    document.getElementById('btn-download-result').addEventListener('click', function() {
+        alert('In a real app, this would download the prediction result.');
+    });
+    
+    // Batch prediction button
+    document.getElementById('btn-batch-predict').addEventListener('click', function() {
+        const fileInput = document.getElementById('batch-file');
+        
+        if (fileInput.files.length === 0) {
+            alert('Please select a CSV file to upload.');
+            return;
+        }
+        
+        // In a real app, this would upload the file and process it
+        alert('In a real app, this would upload and process the file for batch prediction.');
+    });
+});
+</script>
+{% endblock %}
