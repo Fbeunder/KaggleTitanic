@@ -6,24 +6,26 @@
    - Opzetten van de basisstructuur van het project ✓
    - Aanmaken van de benodigde modules en mappen ✓
    - Configuratie van de development omgeving ✓
-   - Status: Afgerond en PR aangemaakt (#2)
+   - Status: Afgerond (#2)
 
-2. **Data processing implementeren**
+2. **Data processing implementeren** ✓
    - Implementeren van data_loader.py om train.csv en test.csv te laden ✓
    - Implementeren van data_preprocessor.py voor basis data cleaning en transformatie ✓
    - Exploratory Data Analysis om inzicht te krijgen in de data ✓
-   - Status: PR aangemaakt (#4), wacht op goedkeuring
+   - Status: Afgerond (#4)
 
-3. **Model Factory implementeren**
+3. **Model Factory implementeren** ✓
    - Implementeren van de basis model factory met initiële algoritmes ✓
    - Toevoegen van basismodellen zoals Logistic Regression, Random Forest, etc. ✓
-   - Status: PR aangemaakt (#6), wacht op goedkeuring
+   - Status: Afgerond (#6)
 
 4. **Model Training en Evaluatie implementeren**
-   - Implementeren van model_trainer.py voor het trainen van de modellen
-   - Implementeren van model_evaluator.py voor het evalueren van model performance
-   - Cross-validatie toevoegen
-   - Status: Nog niet gestart
+   - Implementeren van model_trainer.py voor het trainen van de modellen ✓
+   - Implementeren van model_evaluator.py voor het evalueren van model performance ✓
+   - Cross-validatie toevoegen ✓
+   - Hyperparameter tuning functionaliteit toevoegen ✓
+   - Visualisatie van model resultaten toevoegen ✓
+   - Status: PR aangemaakt (#8), wacht op goedkeuring
 
 5. **Basis Feature Engineering implementeren**
    - Implementeren van feature_creator.py voor het creëren van basale features
@@ -55,13 +57,14 @@
 10. **Testen**
     - Unit tests schrijven voor de belangrijkste functionaliteiten
     - End-to-end testen van de applicatie
-    - Status: Nog niet gestart
+    - Status: Gedeeltelijk geïmplementeerd (tests voor modelling modules aanwezig in PR #8)
 
 ## Nice-to-haves
 
 1. **Hyperparameter optimalisatie**
    - Toevoegen van grid search of random search voor het optimaliseren van model parameters
    - Automatiseren van hyperparameter tuning
+   - Status: Basisimplementatie aanwezig in Model Trainer (PR #8)
 
 2. **Uitgebreide feature engineering**
    - Geavanceerde feature engineering technieken toepassen
@@ -75,6 +78,7 @@
 4. **Model interpretability toevoegen**
    - Inzichten in feature importance visualiseren
    - SHAP values implementeren voor model interpretatie
+   - Status: Basisfunctionaliteit aanwezig in Model Factory en Evaluator
 
 5. **Real-time model training**
    - Mogelijkheid toevoegen om modellen direct in de browser te trainen
