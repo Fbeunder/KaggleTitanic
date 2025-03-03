@@ -1,0 +1,362 @@
+{% extends "base.html" %}
+
+{% block title %}Train Models - Titanic Survival Predictor{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <h1 class="card-title">
+                    <i class="fas fa-cogs text-primary me-2"></i>Train Models
+                </h1>
+                <p class="lead">
+                    Train various machine learning models to predict Titanic passenger survival.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-4 mb-4 mb-lg-0">
+        <div class="card shadow h-100">
+            <div class="card-header bg-primary text-white">
+                <h4 class="card-title mb-0">Model Selection</h4>
+            </div>
+            <div class="card-body">
+                <form id="model-selection-form">
+                    <div class="mb-3">
+                        <label for="model-type" class="form-label">Model Type:</label>
+                        <select id="model-type" class="form-select">
+                            <option value="logistic_regression">Logistic Regression</option>
+                            <option value="random_forest">Random Forest</option>
+                            <option value="decision_tree">Decision Tree</option>
+                            <option value="svm">Support Vector Machine</option>
+                            <option value="knn">K-Nearest Neighbors</option>
+                            <option value="gradient_boosting">Gradient Boosting</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="feature-engineering" class="form-label">Feature Engineering:</label>
+                        <select id="feature-engineering" class="form-select">
+                            <option value="basic">Basic Features</option>
+                            <option value="enhanced">Enhanced Features</option>
+                            <option value="all">All Features</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="cross-validation" class="form-label">Cross-Validation Folds:</label>
+                        <input type="number" id="cross-validation" class="form-control" min="2" max="10" value="5">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="test-size" class="form-label">Test Size (%):</label>
+                        <input type="range" class="form-range" id="test-size" min="10" max="40" value="20" step="5">
+                        <div class="text-center" id="test-size-value">20%</div>
+                    </div>
+                    
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="hyperparameter-tuning" checked>
+                        <label class="form-check-label" for="hyperparameter-tuning">Hyperparameter Tuning</label>
+                    </div>
+                    
+                    <button type="button" class="btn btn-primary w-100" id="btn-show-params">
+                        <i class="fas fa-sliders-h me-1"></i>Configure Parameters
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-8">
+        <div class="card shadow h-100">
+            <div class="card-header bg-primary text-white">
+                <h4 class="card-title mb-0">Model Parameters</h4>
+            </div>
+            <div class="card-body">
+                <!-- Logistic Regression Parameters -->
+                <div id="params-logistic_regression" class="model-params">
+                    <h5 class="card-subtitle mb-3">Logistic Regression Parameters</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="lr-penalty" class="form-label">Regularization:</label>
+                            <select id="lr-penalty" class="form-select">
+                                <option value="l2">L2 (Ridge)</option>
+                                <option value="l1">L1 (Lasso)</option>
+                                <option value="elasticnet">ElasticNet</option>
+                                <option value="none">None</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="lr-C" class="form-label">Regularization Strength (C):</label>
+                            <input type="number" id="lr-C" class="form-control" min="0.1" max="10" step="0.1" value="1.0">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="lr-solver" class="form-label">Solver:</label>
+                            <select id="lr-solver" class="form-select">
+                                <option value="lbfgs">LBFGS</option>
+                                <option value="liblinear">LibLinear</option>
+                                <option value="newton-cg">Newton-CG</option>
+                                <option value="sag">SAG</option>
+                                <option value="saga">SAGA</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="lr-max-iter" class="form-label">Max Iterations:</label>
+                            <input type="number" id="lr-max-iter" class="form-control" min="100" max="1000" step="100" value="100">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Random Forest Parameters -->
+                <div id="params-random_forest" class="model-params" style="display: none;">
+                    <h5 class="card-subtitle mb-3">Random Forest Parameters</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="rf-n-estimators" class="form-label">Number of Trees:</label>
+                            <input type="number" id="rf-n-estimators" class="form-control" min="10" max="500" step="10" value="100">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="rf-max-depth" class="form-label">Max Depth:</label>
+                            <input type="number" id="rf-max-depth" class="form-control" min="1" max="20" value="10">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="rf-min-samples-split" class="form-label">Min Samples Split:</label>
+                            <input type="number" id="rf-min-samples-split" class="form-control" min="2" max="20" value="2">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="rf-min-samples-leaf" class="form-label">Min Samples Leaf:</label>
+                            <input type="number" id="rf-min-samples-leaf" class="form-control" min="1" max="20" value="1">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Other model parameters would be added similarly -->
+                
+                <div class="mt-4">
+                    <button type="button" class="btn btn-success w-100" id="btn-train-model">
+                        <i class="fas fa-play me-1"></i>Train Model
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="card-title mb-0">Training Progress & Results</h4>
+            </div>
+            <div class="card-body">
+                <!-- Progress bar -->
+                <div id="training-progress-container" style="display: none;">
+                    <h5 class="card-subtitle mb-2">Training in Progress...</h5>
+                    <div class="progress mb-3">
+                        <div id="training-progress-bar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                    </div>
+                    <p id="training-status">Initializing training...</p>
+                </div>
+                
+                <!-- Results (initially hidden) -->
+                <div id="training-results" style="display: none;">
+                    <h5 class="card-subtitle mb-3">Training Results</h5>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-header bg-light">
+                                    <h6 class="card-title mb-0">Performance Metrics</h6>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-sm table-striped">
+                                        <tbody>
+                                            <tr>
+                                                <th>Accuracy:</th>
+                                                <td id="result-accuracy">-</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Precision:</th>
+                                                <td id="result-precision">-</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Recall:</th>
+                                                <td id="result-recall">-</td>
+                                            </tr>
+                                            <tr>
+                                                <th>F1 Score:</th>
+                                                <td id="result-f1">-</td>
+                                            </tr>
+                                            <tr>
+                                                <th>AUC-ROC:</th>
+                                                <td id="result-auc">-</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-header bg-light">
+                                    <h6 class="card-title mb-0">Confusion Matrix</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div id="confusion-matrix" style="height: 200px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-header bg-light">
+                                    <h6 class="card-title mb-0">ROC Curve</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div id="roc-curve" style="height: 200px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-header bg-light">
+                                    <h6 class="card-title mb-0">Feature Importance</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div id="feature-importance-chart" style="height: 200px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <button type="button" class="btn btn-primary me-2" id="btn-save-model">
+                                <i class="fas fa-save me-1"></i>Save Model
+                            </button>
+                            <button type="button" class="btn btn-secondary" id="btn-compare-models">
+                                <i class="fas fa-chart-line me-1"></i>Compare with Other Models
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Initial prompt -->
+                <div id="training-initial" class="text-center py-5">
+                    <p class="mb-0">
+                        <i class="fas fa-info-circle me-1"></i>Select a model type and configure parameters, then click "Train Model" to start training.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Update test size display
+    const testSizeSlider = document.getElementById('test-size');
+    const testSizeValue = document.getElementById('test-size-value');
+    
+    testSizeSlider.addEventListener('input', function() {
+        testSizeValue.textContent = this.value + '%';
+    });
+    
+    // Show/hide model parameters based on selection
+    const modelTypeSelect = document.getElementById('model-type');
+    const allParamDivs = document.querySelectorAll('.model-params');
+    
+    modelTypeSelect.addEventListener('change', function() {
+        // Hide all parameter divs
+        allParamDivs.forEach(div => div.style.display = 'none');
+        
+        // Show the selected model's parameters
+        const selectedParamDiv = document.getElementById('params-' + this.value);
+        if (selectedParamDiv) {
+            selectedParamDiv.style.display = 'block';
+        }
+    });
+    
+    // Train model button click
+    document.getElementById('btn-train-model').addEventListener('click', function() {
+        // Hide initial prompt
+        document.getElementById('training-initial').style.display = 'none';
+        
+        // Show progress
+        document.getElementById('training-progress-container').style.display = 'block';
+        document.getElementById('training-results').style.display = 'none';
+        
+        // Simulate training progress
+        let progress = 0;
+        const progressBar = document.getElementById('training-progress-bar');
+        const statusText = document.getElementById('training-status');
+        
+        const progressInterval = setInterval(function() {
+            progress += 10;
+            progressBar.style.width = progress + '%';
+            
+            if (progress === 10) {
+                statusText.textContent = 'Preparing data...';
+            } else if (progress === 30) {
+                statusText.textContent = 'Applying feature engineering...';
+            } else if (progress === 50) {
+                statusText.textContent = 'Training model...';
+            } else if (progress === 70) {
+                statusText.textContent = 'Evaluating model...';
+            } else if (progress === 90) {
+                statusText.textContent = 'Finalizing results...';
+            } else if (progress >= 100) {
+                clearInterval(progressInterval);
+                statusText.textContent = 'Training complete!';
+                
+                // Show results after a short delay
+                setTimeout(function() {
+                    document.getElementById('training-progress-container').style.display = 'none';
+                    document.getElementById('training-results').style.display = 'block';
+                    
+                    // Populate with mock results
+                    document.getElementById('result-accuracy').textContent = '82.5%';
+                    document.getElementById('result-precision').textContent = '79.3%';
+                    document.getElementById('result-recall').textContent = '83.7%';
+                    document.getElementById('result-f1').textContent = '81.4%';
+                    document.getElementById('result-auc').textContent = '0.857';
+                    
+                    // In a real application, the charts would be initialized here with actual data
+                    document.getElementById('confusion-matrix').innerHTML = '<div class="alert alert-info">Confusion matrix would be shown here</div>';
+                    document.getElementById('roc-curve').innerHTML = '<div class="alert alert-info">ROC curve would be shown here</div>';
+                    document.getElementById('feature-importance-chart').innerHTML = '<div class="alert alert-info">Feature importance chart would be shown here</div>';
+                }, 500);
+            }
+        }, 400);
+    });
+    
+    // Configure Parameters button click
+    document.getElementById('btn-show-params').addEventListener('click', function() {
+        // This would typically scroll to or highlight the parameters section
+        const paramsSection = document.querySelector('.card-header:contains("Model Parameters")');
+        if (paramsSection) {
+            paramsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    });
+    
+    // Save and Compare buttons
+    document.getElementById('btn-save-model').addEventListener('click', function() {
+        alert('Model would be saved here');
+    });
+    
+    document.getElementById('btn-compare-models').addEventListener('click', function() {
+        window.location.href = "{{ url_for('results') }}";
+    });
+});
+</script>
+{% endblock %}
