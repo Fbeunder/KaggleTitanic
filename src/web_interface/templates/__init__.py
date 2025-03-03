@@ -1,0 +1,1 @@
+# This file is left empty to make the templates directory a proper Python package.
