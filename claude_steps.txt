@@ -66,11 +66,17 @@
     - Requirements bijgewerkt voor nieuwere Python versies ✓
     - Status: Afgerond (#19)
 
-12. **Python 3.13 requirements compatibiliteit** 🔄
-    - Fix voor pip install errors met requirements.txt in Python 3.13.1 🔄
-    - Bijwerken van packages naar nieuwere versies die compatibel zijn met Python 3.13 🔄
-    - Implementeren van betere versie-specificatie (>= format) voor toekomstige compatibiliteit 🔄
-    - Status: In Progress (PR #21)
+12. **Python 3.13 requirements compatibiliteit** ✓
+    - Fix voor pip install errors met requirements.txt in Python 3.13.1 ✓
+    - Bijwerken van packages naar nieuwere versies die compatibel zijn met Python 3.13 ✓
+    - Implementeren van betere versie-specificatie (>= format) voor toekomstige compatibiliteit ✓
+    - Status: Afgerond (PR #21)
+
+13. **Fix app.py module import fout** 🔄
+    - Fix probleem waarbij `python src/web_interface/app.py` een ModuleNotFoundError geeft 🔄
+    - Maak een run.py bestand in de hoofdmap dat de Python path correct instelt 🔄
+    - Documenteer de nieuwe manier van starten in de README 🔄
+    - Status: In Progress (PR #24)
 
 ## Nice-to-haves
 
@@ -123,6 +129,6 @@
     - Docker configuratie
     - Cloud deployment opties
 
-De must-have functionaliteiten zijn bijna allemaal afgerond. Het laatste openstaande issue betreft compatibiliteit met Python 3.13.1, waarvoor een oplossing is voorgesteld in PR #21. Zodra deze pull request is goedgekeurd en gemerged, zijn alle must-have functionaliteiten compleet en is de applicatie volledig functioneel.
+De must-have functionaliteiten zijn bijna allemaal afgerond. Er is nog een lopende PR (#24) om een probleem met het starten van de app via `python src/web_interface/app.py` op te lossen. Zodra deze pull request is goedgekeurd en gemerged, zijn alle must-have functionaliteiten compleet en is de applicatie volledig functioneel.
 
 De nice-to-have functies zouden verdere verbeteringen bieden, maar zijn niet noodzakelijk voor de basiswerking van de applicatie.
