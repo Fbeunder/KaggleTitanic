@@ -27,21 +27,21 @@
    - Visualisatie van model resultaten toevoegen ✓
    - Status: Afgerond (#8)
 
-5. **Basis Feature Engineering implementeren**
+5. **Basis Feature Engineering implementeren** ✓
    - Implementeren van feature_creator.py voor het creëren van basale features ✓
    - Implementeren van feature_selector.py voor feature selectie ✓
    - Status: PR aangemaakt (#10), wacht op goedkeuring
 
 6. **Web Interface ontwikkelen**
-   - Implementeren van app.py als hoofdmodule voor de web applicatie
-   - Implementeren van model_interface.py voor interactie tussen web en modellen
-   - Ontwikkelen van een basis UI
-   - Status: Nog niet gestart
+   - Implementeren van app.py als hoofdmodule voor de web applicatie ✓
+   - Implementeren van model_interface.py voor interactie tussen web en modellen ✓
+   - Ontwikkelen van een basis UI ✓
+   - Status: PR aangemaakt (#12), wacht op goedkeuring
 
 7. **Dashboard voor visualisatie**
    - Implementeren van dashboard.py voor het visualiseren van resultaten
    - Toevoegen van grafieken en plots voor data en model performance
-   - Status: Nog niet gestart
+   - Status: Gedeeltelijk geïmplementeerd (basis functionaliteit aanwezig in PR #12)
 
 8. **Submission Generator implementeren**
    - Implementeren van submission_generator.py voor het genereren van Kaggle submissions
@@ -84,6 +84,7 @@
 5. **Real-time model training**
    - Mogelijkheid toevoegen om modellen direct in de browser te trainen
    - Interactieve aanpassing van model parameters
+   - Status: Basisimplementatie aanwezig in Web Interface (PR #12)
 
 6. **Gebruikersaccounts**
    - Implementeren van gebruikersregistratie en login
@@ -92,14 +93,17 @@
 7. **API voor externe toegang**
    - RESTful API implementeren voor toegang tot modellen
    - Documentatie voor API gebruik
+   - Status: Basis API endpoints aanwezig in Web Interface (PR #12)
 
 8. **Verbeterde UI/UX**
    - Responsief design voor verschillende apparaten
    - Verbeterde gebruikerservaring en interface
+   - Status: Basisimplementatie aanwezig in Web Interface (PR #12)
 
 9. **Caching systeem voor modellen**
    - Cachen van modelresultaten voor betere performance
    - Opslaan van getrainde modellen voor hergebruik
+   - Status: Basisimplementatie aanwezig in Model Interface (PR #12)
 
 10. **Deployment instructies**
     - Handleiding voor deployment naar productie
