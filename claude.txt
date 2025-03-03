@@ -15,13 +15,21 @@ De applicatie wordt opgedeeld in de volgende modules:
 ## 1. Data Processing
 
 ### data_loader.py
-- **Status**: Basisimplementatie aanwezig, verdere functionaliteit in ontwikkeling
-- **Functionaliteit**: Verantwoordelijk voor het laden van de train.csv en test.csv datasets
-- **Afhankelijkheid**: Geen
+- **Status**: Volledige implementatie aanwezig
+- **Functionaliteit**: 
+  - Laden van de train.csv en test.csv datasets
+  - Error handling voor missing files, empty files en parsing errors
+  - Combineren van train en test data voor consistente preprocessing
+- **Afhankelijkheid**: Utilities/config.py
 
 ### data_preprocessor.py
-- **Status**: Basisimplementatie aanwezig, verdere functionaliteit in ontwikkeling
-- **Functionaliteit**: Verantwoordelijk voor het verwerken en opschonen van de data, inclusief missing value imputation en feature encoding
+- **Status**: Volledige implementatie aanwezig
+- **Functionaliteit**: 
+  - Verwerken en opschonen van de data
+  - Missing value imputation
+  - Feature encoding voor categorische variabelen
+  - Feature scaling voor numerieke variabelen
+  - Feature engineering zoals title extraction en family features
 - **Afhankelijkheid**: data_loader.py
 
 ## 2. Modelling
@@ -86,3 +94,10 @@ De applicatie wordt opgedeeld in de volgende modules:
 - **Status**: Basisimplementatie aanwezig
 - **Functionaliteit**: Hulpmodule voor het genereren van de submission file in het juiste formaat voor Kaggle
 - **Afhankelijkheid**: model_evaluator.py
+
+## 6. Notebooks
+
+### titanic_eda.ipynb
+- **Status**: Volledige implementatie aanwezig
+- **Functionaliteit**: Notebook voor Exploratory Data Analysis (EDA) van de Titanic dataset
+- **Afhankelijkheid**: data_loader.py
