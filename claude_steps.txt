@@ -9,14 +9,15 @@
    - Status: Afgerond en PR aangemaakt (#2)
 
 2. **Data processing implementeren**
-   - Implementeren van data_loader.py om train.csv en test.csv te laden
-   - Implementeren van data_preprocessor.py voor basis data cleaning en transformatie
-   - Exploratory Data Analysis om inzicht te krijgen in de data
-   - Status: Nog niet gestart, issue aangemaakt (#3)
+   - Implementeren van data_loader.py om train.csv en test.csv te laden ✓
+   - Implementeren van data_preprocessor.py voor basis data cleaning en transformatie ✓
+   - Exploratory Data Analysis om inzicht te krijgen in de data ✓
+   - Status: PR aangemaakt (#4), wacht op goedkeuring
 
 3. **Model Factory implementeren**
    - Implementeren van de basis model factory met initiële algoritmes
    - Toevoegen van basismodellen zoals Logistic Regression, Random Forest, etc.
+   - Status: Nog niet gestart
 
 4. **Model Training en Evaluatie implementeren**
    - Implementeren van model_trainer.py voor het trainen van de modellen
