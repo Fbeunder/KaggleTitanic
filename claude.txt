@@ -9,6 +9,8 @@ De applicatie wordt opgedeeld in de volgende modules:
 3. **Feature Engineering**: Modules voor het creëren en selecteren van features
 4. **Web Interface**: Modules voor de web interface waarmee gebruikers kunnen interacteren met de modellen
 5. **Utilities**: Hulpmodules voor algemene functionaliteiten
+6. **Documentatie**: Documentatie voor gebruikers en ontwikkelaars
+7. **Tests**: Testmodules voor kwaliteitsborging
 
 # Modules
 
@@ -189,3 +191,64 @@ De applicatie wordt opgedeeld in de volgende modules:
 - **Status**: Volledige implementatie aanwezig
 - **Functionaliteit**: Demonstratie notebook voor het gebruik van de ModelFactory module
 - **Afhankelijkheid**: data_loader.py, data_preprocessor.py, model_factory.py
+
+## 7. Documentatie
+
+### README.md
+- **Status**: Volledige implementatie aanwezig (PR #16)
+- **Functionaliteit**: 
+  - Projectoverzicht en doel
+  - Installatie-instructies
+  - Gebruiksvoorbeeld en functionaliteit
+  - Projectstructuur
+  - Bijdrage richtlijnen
+- **Afhankelijkheid**: Geen
+
+### GETTING_STARTED.md
+- **Status**: Volledige implementatie aanwezig (PR #16)
+- **Functionaliteit**: 
+  - Stap-voor-stap gids voor nieuwe gebruikers
+  - Voorbeelden van gebruik
+  - Uitleg van de componenten
+  - Troubleshooting advies
+- **Afhankelijkheid**: Geen
+
+### requirements.txt
+- **Status**: Volledige implementatie aanwezig (PR #16)
+- **Functionaliteit**: 
+  - Specifieke versies van alle dependencies
+  - Python versie-vereisten
+  - Gegroepeerd naar functionaliteit
+- **Afhankelijkheid**: Geen
+
+### Code documentatie
+- **Status**: Basisimplementatie aanwezig, uitgebreid in PR #16
+- **Functionaliteit**: 
+  - Docstrings voor modules, klassen en methoden
+  - Type hints voor parameters en return values
+  - Voorbeelden van gebruik
+- **Afhankelijkheid**: Geen
+
+## 8. Tests
+
+### Unit Tests
+- **Status**: Gedeeltelijke implementatie, nieuw issue #17
+- **Functionaliteit**: 
+  - Tests voor individuele componenten en functies
+  - Testen van edge cases en error handling
+  - Gebruik van mocking voor externe afhankelijkheden
+- **Afhankelijkheid**: Alle modules
+
+### Integratie Tests
+- **Status**: Gepland in issue #17
+- **Functionaliteit**: 
+  - Tests voor de integratie tussen verschillende modules
+  - End-to-end workflow testen
+- **Afhankelijkheid**: Alle modules
+
+### Test Coverage
+- **Status**: Gepland in issue #17
+- **Functionaliteit**: 
+  - Configuratie voor code coverage meting
+  - Rapportering van test coverage
+- **Afhankelijkheid**: Unit tests en integratie tests
