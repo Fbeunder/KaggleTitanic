@@ -32,21 +32,21 @@
    - Implementeren van feature_selector.py voor feature selectie ✓
    - Status: PR aangemaakt (#10), wacht op goedkeuring
 
-6. **Web Interface ontwikkelen**
+6. **Web Interface ontwikkelen** ✓
    - Implementeren van app.py als hoofdmodule voor de web applicatie ✓
    - Implementeren van model_interface.py voor interactie tussen web en modellen ✓
    - Ontwikkelen van een basis UI ✓
    - Status: PR aangemaakt (#12), wacht op goedkeuring
 
-7. **Dashboard voor visualisatie**
-   - Implementeren van dashboard.py voor het visualiseren van resultaten
-   - Toevoegen van grafieken en plots voor data en model performance
+7. **Dashboard voor visualisatie** ✓
+   - Implementeren van dashboard.py voor het visualiseren van resultaten ✓
+   - Toevoegen van grafieken en plots voor data en model performance ✓
    - Status: Gedeeltelijk geïmplementeerd (basis functionaliteit aanwezig in PR #12)
 
-8. **Submission Generator implementeren**
-   - Implementeren van submission_generator.py voor het genereren van Kaggle submissions
-   - Testen van submission bestanden
-   - Status: Nog niet gestart
+8. **Submission Generator implementeren** ✓
+   - Implementeren van submission_generator.py voor het genereren van Kaggle submissions ✓
+   - Testen van submission bestanden ✓
+   - Status: PR aangemaakt (#13), wacht op goedkeuring
 
 9. **Uitgebreide documentatie**
    - README.md met gebruiksinstructies
@@ -57,7 +57,7 @@
 10. **Testen**
     - Unit tests schrijven voor de belangrijkste functionaliteiten
     - End-to-end testen van de applicatie
-    - Status: Gedeeltelijk geïmplementeerd (tests voor modelling en feature engineering modules aanwezig)
+    - Status: Gedeeltelijk geïmplementeerd (tests voor modelling, feature engineering en submission generator modules aanwezig)
 
 ## Nice-to-haves
 
