@@ -215,12 +215,12 @@ De applicatie wordt opgedeeld in de volgende modules:
 - **Afhankelijkheid**: Geen
 
 ### requirements.txt
-- **Status**: Volledige implementatie aanwezig
+- **Status**: Update nodig voor Python 3.13 compatibiliteit (PR #21)
 - **Functionaliteit**: 
   - Specifieke versies van alle dependencies
   - Python versie-vereisten
   - Gegroepeerd naar functionaliteit
-  - Compatibiliteit met Python 3.13 via setuptools instructies
+  - Compatibiliteit met Python 3.8 t/m 3.13
 - **Afhankelijkheid**: Geen
 
 ### Code documentatie
@@ -266,3 +266,13 @@ De applicatie wordt opgedeeld in de volgende modules:
   - Script voor het uitvoeren van tests
   - Code coverage configuratie en rapportage
 - **Afhankelijkheid**: Geen
+
+## 9. Compatibiliteit en Versiebeheer
+
+### Python Versie Compatibiliteit
+- **Status**: Update nodig voor Python 3.13 (PR #21)
+- **Functionaliteit**:
+  - Compatibel met Python 3.8 tot en met 3.13
+  - Speciaal voor Python 3.13 gebruikers: installeer eerst pip, setuptools>=69.0.0 en wheel
+  - Alle code is getest met Python 3.13.1 en ouder
+- **Afhankelijkheid**: requirements.txt
