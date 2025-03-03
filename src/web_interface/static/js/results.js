@@ -38,6 +38,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Add event listener for custom event to show model details
+    document.addEventListener('showModelDetails', function(e) {
+        if (e.detail && e.detail.modelName) {
+            showModelDetails(e.detail.modelName);
+        }
+    });
+
     // Handle metric selection for performance chart
     const metricButtons = document.querySelectorAll('[data-metric]');
     metricButtons.forEach(button => {
@@ -111,6 +118,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const errorElement = document.getElementById('visualization-errors');
         if (errorElement) {
             errorElement.classList.add('d-none');
+        }
+        
+        // Clear any previous error details
+        const errorDetailsElement = document.getElementById('visualization-error-details');
+        if (errorDetailsElement) {
+            errorDetailsElement.innerHTML = '';
         }
         
         // Fetch model details from the server
@@ -967,4 +980,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         return colors[index % colors.length];
     }
+
+    // Export function for external use (by the script in results.html)
+    window.showModelDetails = showModelDetails;
 });
