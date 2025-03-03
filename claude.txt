@@ -35,8 +35,20 @@ De applicatie wordt opgedeeld in de volgende modules:
 ## 2. Modelling
 
 ### model_factory.py
-- **Status**: Basisimplementatie aanwezig
-- **Functionaliteit**: Factory pattern implementatie voor het creëren van verschillende machine learning modellen
+- **Status**: Volledige implementatie aanwezig
+- **Functionaliteit**: 
+  - Factory pattern implementatie voor het creëren van verschillende machine learning modellen
+  - Gestandaardiseerde interface voor alle model types
+  - Ondersteuning voor 6 verschillende algoritmes:
+    - Logistic Regression
+    - Random Forest
+    - Decision Tree
+    - Support Vector Machine (SVM)
+    - K-Nearest Neighbors (KNN)
+    - Gradient Boosting
+  - Hyperparameter tuning functionaliteit
+  - Feature importance extractie
+  - Mogelijkheid om nieuwe model types te registreren
 - **Afhankelijkheid**: Geen
 
 ### model_trainer.py
@@ -101,3 +113,8 @@ De applicatie wordt opgedeeld in de volgende modules:
 - **Status**: Volledige implementatie aanwezig
 - **Functionaliteit**: Notebook voor Exploratory Data Analysis (EDA) van de Titanic dataset
 - **Afhankelijkheid**: data_loader.py
+
+### model_factory_demo.ipynb
+- **Status**: Volledige implementatie aanwezig
+- **Functionaliteit**: Demonstratie notebook voor het gebruik van de ModelFactory module
+- **Afhankelijkheid**: data_loader.py, data_preprocessor.py, model_factory.py
