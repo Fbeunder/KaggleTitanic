@@ -280,10 +280,11 @@ De applicatie wordt opgedeeld in de volgende modules:
 ## 10. Applicatie Starters
 
 ### run.py
-- **Status**: In ontwikkeling (PR #24)
+- **Status**: Volledige implementatie aanwezig
 - **Functionaliteit**:
   - Hoofdmodule voor het starten van de applicatie vanuit de root directory
   - Configuratie van Python path om module import problemen te voorkomen
   - Lost het "ModuleNotFoundError: No module named 'src'" probleem op
   - Biedt een eenvoudige en robuste manier om de applicatie te starten
+  - Bevat duidelijke instructies voor gebruikers over hoe de app te starten
 - **Afhankelijkheid**: src.web_interface.app
