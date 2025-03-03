@@ -195,17 +195,18 @@ De applicatie wordt opgedeeld in de volgende modules:
 ## 7. Documentatie
 
 ### README.md
-- **Status**: Volledige implementatie aanwezig (PR #16)
+- **Status**: Volledige implementatie aanwezig
 - **Functionaliteit**: 
   - Projectoverzicht en doel
   - Installatie-instructies
   - Gebruiksvoorbeeld en functionaliteit
   - Projectstructuur
   - Bijdrage richtlijnen
+  - Instructies voor tests
 - **Afhankelijkheid**: Geen
 
 ### GETTING_STARTED.md
-- **Status**: Volledige implementatie aanwezig (PR #16)
+- **Status**: Volledige implementatie aanwezig
 - **Functionaliteit**: 
   - Stap-voor-stap gids voor nieuwe gebruikers
   - Voorbeelden van gebruik
@@ -214,15 +215,16 @@ De applicatie wordt opgedeeld in de volgende modules:
 - **Afhankelijkheid**: Geen
 
 ### requirements.txt
-- **Status**: Volledige implementatie aanwezig (PR #16)
+- **Status**: Volledige implementatie aanwezig
 - **Functionaliteit**: 
   - Specifieke versies van alle dependencies
   - Python versie-vereisten
   - Gegroepeerd naar functionaliteit
+  - Compatibiliteit met Python 3.13 via setuptools instructies
 - **Afhankelijkheid**: Geen
 
 ### Code documentatie
-- **Status**: Basisimplementatie aanwezig, uitgebreid in PR #16
+- **Status**: Volledige implementatie aanwezig
 - **Functionaliteit**: 
   - Docstrings voor modules, klassen en methoden
   - Type hints voor parameters en return values
@@ -232,23 +234,35 @@ De applicatie wordt opgedeeld in de volgende modules:
 ## 8. Tests
 
 ### Unit Tests
-- **Status**: Gedeeltelijke implementatie, nieuw issue #17
+- **Status**: Volledige implementatie aanwezig
 - **Functionaliteit**: 
   - Tests voor individuele componenten en functies
   - Testen van edge cases en error handling
   - Gebruik van mocking voor externe afhankelijkheden
+  - Tests voor data processing, feature engineering, modelling en submission generation
 - **Afhankelijkheid**: Alle modules
 
 ### Integratie Tests
-- **Status**: Gepland in issue #17
+- **Status**: Volledige implementatie aanwezig
 - **Functionaliteit**: 
   - Tests voor de integratie tussen verschillende modules
   - End-to-end workflow testen
+  - Tests voor de volledige pipeline van data tot submission generation
 - **Afhankelijkheid**: Alle modules
 
-### Test Coverage
-- **Status**: Gepland in issue #17
+### Web Interface Tests
+- **Status**: Volledige implementatie aanwezig
 - **Functionaliteit**: 
-  - Configuratie voor code coverage meting
-  - Rapportering van test coverage
-- **Afhankelijkheid**: Unit tests en integratie tests
+  - Tests voor de web routes en API endpoints
+  - Tests voor de volledige voorspellingsworkflow
+  - Testen van model training via de web interface
+- **Afhankelijkheid**: Web interface modules
+
+### Test Infrastructure
+- **Status**: Volledige implementatie aanwezig
+- **Functionaliteit**:
+  - Configuratie voor test uitvoering via pytest
+  - Fixtures voor herbruikbare testdata
+  - Script voor het uitvoeren van tests
+  - Code coverage configuratie en rapportage
+- **Afhankelijkheid**: Geen
