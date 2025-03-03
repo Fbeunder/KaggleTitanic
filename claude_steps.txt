@@ -100,6 +100,13 @@
     - Voeg debugging hulpmiddelen toe voor transparantie en probleemoplossing ✓
     - Status: Afgerond (PR #30)
 
+17. **Fix Training Progress & Results blijft leeg na trainen** ✓
+    - Fix probleem waarbij model details niet worden getoond na het trainen van een model ✓
+    - Verbeter opslag van modelevaluaties in model_interface.py ✓
+    - Voeg automatische detectie van nieuw getrainde modellen toe in results.html ✓
+    - Uitgebreide foutafhandeling en betere gebruikersfeedback ✓
+    - Status: Afgerond (PR #31)
+
 ## Nice-to-haves
 
 1. **Hyperparameter optimalisatie**
@@ -160,8 +167,8 @@
     - Robuuste error handling voor ontbrekende bestanden
     - Nuttige foutmeldingen voor gebruikers
     - Logging van fouten voor troubleshooting
-    - Status: Gedeeltelijk geïmplementeerd in PR #26 voor de 'Explore Data' functionaliteit en in PR #30 voor de visualisaties
+    - Status: Gedeeltelijk geïmplementeerd in PR #26 voor de 'Explore Data' functionaliteit, in PR #30 voor de visualisaties, en in PR #31 voor de model training resultaten
 
-Alle must-have functionaliteiten zijn nu afgerond. De laatste PR (#30) heeft de problemen met lege visualisaties in de model details pagina opgelost, waardoor een robuustere gebruikerservaring is gerealiseerd. De applicatie kan nu correct werken, zelfs wanneer er problemen zijn met het laden van externe bibliotheken zoals Plotly.js.
+Alle must-have functionaliteiten zijn nu afgerond. De laatste PR (#31) heeft het probleem opgelost waarbij model visualisaties niet werden getoond na het trainen van een model, door verbeterde opslag van modelresultaten en automatische weergave van de details.
 
 De nice-to-have functies zouden verdere verbeteringen bieden, maar zijn niet noodzakelijk voor de basiswerking van de applicatie.
