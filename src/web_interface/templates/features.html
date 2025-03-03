@@ -25,38 +25,48 @@
                 <h4 class="card-title mb-0">Dataset Overview</h4>
             </div>
             <div class="card-body">
+                {% if dataset_stats and dataset_stats|length > 0 %}
                 <table class="table table-sm">
                     <tbody>
                         <tr>
                             <th>Total Passengers:</th>
-                            <td>{{ dataset_stats.total_passengers }}</td>
+                            <td>{{ dataset_stats.total_passengers or 'N/A' }}</td>
                         </tr>
                         <tr>
                             <th>Survival Rate:</th>
-                            <td>{{ dataset_stats.survival_rate|round(2) }}%</td>
+                            <td>{% if dataset_stats.survival_rate is defined %}{{ dataset_stats.survival_rate|round(2) }}%{% else %}N/A{% endif %}</td>
                         </tr>
                         <tr>
                             <th>Average Age:</th>
-                            <td>{{ dataset_stats.avg_age|round(2) }} years</td>
+                            <td>{% if dataset_stats.avg_age is defined %}{{ dataset_stats.avg_age|round(2) }} years{% else %}N/A{% endif %}</td>
                         </tr>
                         <tr>
                             <th>Average Fare:</th>
-                            <td>${{ dataset_stats.avg_fare|round(2) }}</td>
+                            <td>{% if dataset_stats.avg_fare is defined %}${{ dataset_stats.avg_fare|round(2) }}{% else %}N/A{% endif %}</td>
                         </tr>
                         <tr>
                             <th>Male Passengers:</th>
-                            <td>{{ dataset_stats.male_count }} ({{ dataset_stats.male_pct|round(2) }}%)</td>
+                            <td>{% if dataset_stats.male_count is defined %}{{ dataset_stats.male_count }} ({{ dataset_stats.male_pct|round(2) }}%){% else %}N/A{% endif %}</td>
                         </tr>
                         <tr>
                             <th>Female Passengers:</th>
-                            <td>{{ dataset_stats.female_count }} ({{ dataset_stats.female_pct|round(2) }}%)</td>
+                            <td>{% if dataset_stats.female_count is defined %}{{ dataset_stats.female_count }} ({{ dataset_stats.female_pct|round(2) }}%){% else %}N/A{% endif %}</td>
                         </tr>
                         <tr>
                             <th>Missing Age Values:</th>
-                            <td>{{ dataset_stats.missing_age }} ({{ dataset_stats.missing_age_pct|round(2) }}%)</td>
+                            <td>{% if dataset_stats.missing_age is defined %}{{ dataset_stats.missing_age }} ({{ dataset_stats.missing_age_pct|round(2) }}%){% else %}N/A{% endif %}</td>
                         </tr>
                     </tbody>
                 </table>
+                {% else %}
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Dataset not found.</strong> Please make sure you have placed the train.csv and test.csv files in the data directory.
+                    <p class="mt-2 mb-0">
+                        You can download these files from the <a href="https://www.kaggle.com/c/titanic/data" target="_blank">Kaggle Titanic competition page</a>.
+                    </p>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -67,7 +77,14 @@
                 <h4 class="card-title mb-0">Survival by Class and Gender</h4>
             </div>
             <div class="card-body">
-                <div id="survival-by-class-gender" style="height: 400px;"></div>
+                <div id="survival-by-class-gender" style="height: 400px;">
+                    {% if not dataset_stats or dataset_stats|length == 0 %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Charts will be available once dataset is loaded.
+                    </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
@@ -80,7 +97,14 @@
                 <h4 class="card-title mb-0">Survival by Age</h4>
             </div>
             <div class="card-body">
-                <div id="survival-by-age" style="height: 350px;"></div>
+                <div id="survival-by-age" style="height: 350px;">
+                    {% if not dataset_stats or dataset_stats|length == 0 %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Charts will be available once dataset is loaded.
+                    </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
@@ -91,7 +115,14 @@
                 <h4 class="card-title mb-0">Survival by Family Size</h4>
             </div>
             <div class="card-body">
-                <div id="survival-by-family" style="height: 350px;"></div>
+                <div id="survival-by-family" style="height: 350px;">
+                    {% if not dataset_stats or dataset_stats|length == 0 %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Charts will be available once dataset is loaded.
+                    </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
@@ -105,7 +136,14 @@
             </div>
             <div class="card-body">
                 <h5 class="card-subtitle mb-3">Top Features by Importance</h5>
-                <div id="feature-importance" style="height: 400px;"></div>
+                <div id="feature-importance" style="height: 400px;">
+                    {% if not dataset_stats or dataset_stats|length == 0 %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Feature importance will be available once dataset is loaded.
+                    </div>
+                    {% endif %}
+                </div>
                 
                 <div class="mt-3">
                     <h5 class="card-subtitle mb-3">Feature Selection Method</h5>
@@ -124,7 +162,7 @@
                             <input type="number" id="n-features" class="form-control" min="1" max="20" value="10">
                         </div>
                         <div class="col-md-4 d-flex align-items-end">
-                            <button type="submit" class="btn btn-primary w-100">
+                            <button type="submit" class="btn btn-primary w-100" {% if not dataset_stats or dataset_stats|length == 0 %}disabled{% endif %}>
                                 <i class="fas fa-filter me-1"></i>Apply Selection
                             </button>
                         </div>
@@ -190,7 +228,7 @@
                     </table>
                 </div>
                 
-                <a href="#" id="btn-create-features" class="btn btn-primary mt-3">
+                <a href="#" id="btn-create-features" class="btn btn-primary mt-3" {% if not dataset_stats or dataset_stats|length == 0 %}disabled{% endif %}>
                     <i class="fas fa-magic me-1"></i>Generate Enhanced Features
                 </a>
             </div>
@@ -228,10 +266,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // In a real application, these would be populated with data from the server
     
     // This is placeholder code - in a real app these would be initialized with Plotly or another chart library
+    {% if dataset_stats and dataset_stats|length > 0 %}
     document.getElementById('survival-by-class-gender').innerHTML = '<div class="alert alert-info">Chart would be rendered here with real data</div>';
     document.getElementById('survival-by-age').innerHTML = '<div class="alert alert-info">Chart would be rendered here with real data</div>';
     document.getElementById('survival-by-family').innerHTML = '<div class="alert alert-info">Chart would be rendered here with real data</div>';
     document.getElementById('feature-importance').innerHTML = '<div class="alert alert-info">Chart would be rendered here with real data</div>';
+    {% endif %}
     
     // Add event listeners
     document.getElementById('feature-selection-form').addEventListener('submit', function(e) {
