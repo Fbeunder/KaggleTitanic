@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Titanic Survival Predictor{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <h1 class="card-title mb-3">Titanic Survival Predictor</h1>
+                <p class="lead">
+                    Welcome to the Titanic Survival Predictor, a machine learning application that predicts passenger survival based on the famous Kaggle Titanic dataset.
+                </p>
+                <p>
+                    This application allows you to explore the Titanic dataset, train various machine learning models, and make predictions on new passenger data.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6 mb-3 mb-md-0">
+        <div class="card h-100 shadow">
+            <div class="card-body">
+                <h3 class="card-title">
+                    <i class="fas fa-chart-bar text-primary me-2"></i>Explore Features
+                </h3>
+                <p class="card-text">
+                    Discover the Titanic dataset through interactive visualizations. Explore the relationships between various passenger attributes and survival rates.
+                </p>
+                <a href="{{ url_for('features') }}" class="btn btn-outline-primary">Explore Data</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100 shadow">
+            <div class="card-body">
+                <h3 class="card-title">
+                    <i class="fas fa-cogs text-primary me-2"></i>Train Models
+                </h3>
+                <p class="card-text">
+                    Train various machine learning models on the Titanic dataset. Configure hyperparameters and evaluate model performance.
+                </p>
+                <a href="{{ url_for('train') }}" class="btn btn-outline-primary">Train Models</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6 mb-3 mb-md-0">
+        <div class="card h-100 shadow">
+            <div class="card-body">
+                <h3 class="card-title">
+                    <i class="fas fa-magic text-primary me-2"></i>Make Predictions
+                </h3>
+                <p class="card-text">
+                    Use trained models to predict survival for new passenger data. Input passenger information and get predictions.
+                </p>
+                <a href="{{ url_for('predict') }}" class="btn btn-outline-primary">Make Predictions</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100 shadow">
+            <div class="card-body">
+                <h3 class="card-title">
+                    <i class="fas fa-chart-line text-primary me-2"></i>View Results
+                </h3>
+                <p class="card-text">
+                    View the performance of trained models. Compare different models based on various metrics.
+                </p>
+                <a href="{{ url_for('results') }}" class="btn btn-outline-primary">View Results</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <h3 class="card-title">
+                    <i class="fas fa-info-circle text-primary me-2"></i>About the Titanic Dataset
+                </h3>
+                <p class="card-text">
+                    The Titanic dataset contains information about passengers aboard the RMS Titanic, which sank on its maiden voyage in April 1912 after hitting an iceberg. 
+                    The dataset includes passenger information such as age, gender, class, fare, and whether they survived or not.
+                </p>
+                <p class="card-text">
+                    This is a classic dataset used for machine learning classification tasks where the goal is to predict which passengers survived the disaster.
+                </p>
+                <a href="https://www.kaggle.com/c/titanic" target="_blank" class="btn btn-outline-primary">Learn More on Kaggle</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

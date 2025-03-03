@@ -1,0 +1,502 @@
+{% extends "base.html" %}
+
+{% block title %}Results - Titanic Survival Predictor{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <h1 class="card-title">
+                    <i class="fas fa-chart-line text-primary me-2"></i>Model Results
+                </h1>
+                <p class="lead">
+                    Compare and analyze the performance of different trained models.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-12">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="card-title mb-0">Model Comparison</h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Model</th>
+                                <th>Accuracy</th>
+                                <th>Precision</th>
+                                <th>Recall</th>
+                                <th>F1 Score</th>
+                                <th>AUC-ROC</th>
+                                <th>Training Time</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Sample data for demonstration, would be populated from server -->
+                            <tr>
+                                <td>Gradient Boosting</td>
+                                <td>85.6%</td>
+                                <td>83.4%</td>
+                                <td>84.1%</td>
+                                <td>83.7%</td>
+                                <td>0.891</td>
+                                <td>3.2s</td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary view-details-btn" data-model="gradient_boosting">
+                                        <i class="fas fa-eye"></i> Details
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Random Forest</td>
+                                <td>84.2%</td>
+                                <td>82.1%</td>
+                                <td>82.8%</td>
+                                <td>82.4%</td>
+                                <td>0.877</td>
+                                <td>1.5s</td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary view-details-btn" data-model="random_forest">
+                                        <i class="fas fa-eye"></i> Details
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Support Vector Machine</td>
+                                <td>83.1%</td>
+                                <td>81.3%</td>
+                                <td>80.5%</td>
+                                <td>80.9%</td>
+                                <td>0.854</td>
+                                <td>2.1s</td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary view-details-btn" data-model="svm">
+                                        <i class="fas fa-eye"></i> Details
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Logistic Regression</td>
+                                <td>82.5%</td>
+                                <td>79.3%</td>
+                                <td>83.7%</td>
+                                <td>81.4%</td>
+                                <td>0.857</td>
+                                <td>0.8s</td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary view-details-btn" data-model="logistic_regression">
+                                        <i class="fas fa-eye"></i> Details
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>K-Nearest Neighbors</td>
+                                <td>80.7%</td>
+                                <td>78.9%</td>
+                                <td>77.2%</td>
+                                <td>78.0%</td>
+                                <td>0.821</td>
+                                <td>0.9s</td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary view-details-btn" data-model="knn">
+                                        <i class="fas fa-eye"></i> Details
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Decision Tree</td>
+                                <td>78.9%</td>
+                                <td>75.6%</td>
+                                <td>79.3%</td>
+                                <td>77.4%</td>
+                                <td>0.794</td>
+                                <td>0.5s</td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary view-details-btn" data-model="decision_tree">
+                                        <i class="fas fa-eye"></i> Details
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6 mb-4 mb-md-0">
+        <div class="card shadow h-100">
+            <div class="card-header bg-primary text-white">
+                <h4 class="card-title mb-0">Model Performance Comparison</h4>
+            </div>
+            <div class="card-body">
+                <div id="performance-chart" style="height: 400px;"></div>
+                <div class="text-center mt-3">
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-primary active" data-metric="accuracy">Accuracy</button>
+                        <button type="button" class="btn btn-outline-primary" data-metric="precision">Precision</button>
+                        <button type="button" class="btn btn-outline-primary" data-metric="recall">Recall</button>
+                        <button type="button" class="btn btn-outline-primary" data-metric="f1">F1 Score</button>
+                        <button type="button" class="btn btn-outline-primary" data-metric="auc">AUC-ROC</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card shadow h-100">
+            <div class="card-header bg-primary text-white">
+                <h4 class="card-title mb-0">ROC Curves Comparison</h4>
+            </div>
+            <div class="card-body">
+                <div id="roc-curves-chart" style="height: 400px;"></div>
+                <div class="mt-3 text-center">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="model-gb" checked data-model="gradient_boosting">
+                        <label class="form-check-label" for="model-gb">Gradient Boosting</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="model-rf" checked data-model="random_forest">
+                        <label class="form-check-label" for="model-rf">Random Forest</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="model-svm" data-model="svm">
+                        <label class="form-check-label" for="model-svm">SVM</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="model-lr" data-model="logistic_regression">
+                        <label class="form-check-label" for="model-lr">Logistic Regression</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="card-title mb-0">Feature Importance Across Models</h4>
+            </div>
+            <div class="card-body">
+                <div id="feature-importance-chart" style="height: 400px;"></div>
+                <div class="mt-3 text-center">
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-primary active" data-model="gradient_boosting">Gradient Boosting</button>
+                        <button type="button" class="btn btn-outline-primary" data-model="random_forest">Random Forest</button>
+                        <button type="button" class="btn btn-outline-primary" data-model="logistic_regression">Logistic Regression</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="card-title mb-0">Misclassified Examples</h4>
+            </div>
+            <div class="card-body">
+                <p class="card-text">Examples where the best model (Gradient Boosting) makes incorrect predictions:</p>
+                
+                <div class="table-responsive">
+                    <table class="table table-striped table-sm">
+                        <thead>
+                            <tr>
+                                <th>PassengerId</th>
+                                <th>Name</th>
+                                <th>Age</th>
+                                <th>Sex</th>
+                                <th>Class</th>
+                                <th>Fare</th>
+                                <th>Embarked</th>
+                                <th>Actual</th>
+                                <th>Predicted</th>
+                                <th>Probability</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Sample data for demonstration, would be populated from server -->
+                            <tr>
+                                <td>22</td>
+                                <td>Beesley, Mr. Lawrence</td>
+                                <td>34</td>
+                                <td>Male</td>
+                                <td>2nd</td>
+                                <td>$13.00</td>
+                                <td>S</td>
+                                <td><span class="badge bg-success">Survived</span></td>
+                                <td><span class="badge bg-danger">Died</span></td>
+                                <td>0.32</td>
+                            </tr>
+                            <tr>
+                                <td>118</td>
+                                <td>Connors, Mr. Patrick</td>
+                                <td>70</td>
+                                <td>Male</td>
+                                <td>3rd</td>
+                                <td>$7.75</td>
+                                <td>Q</td>
+                                <td><span class="badge bg-success">Survived</span></td>
+                                <td><span class="badge bg-danger">Died</span></td>
+                                <td>0.15</td>
+                            </tr>
+                            <tr>
+                                <td>174</td>
+                                <td>Mangan, Miss. Mary</td>
+                                <td>30.5</td>
+                                <td>Female</td>
+                                <td>3rd</td>
+                                <td>$7.75</td>
+                                <td>Q</td>
+                                <td><span class="badge bg-danger">Died</span></td>
+                                <td><span class="badge bg-success">Survived</span></td>
+                                <td>0.88</td>
+                            </tr>
+                            <tr>
+                                <td>297</td>
+                                <td>Hanna, Mr. Mansour</td>
+                                <td>23.5</td>
+                                <td>Male</td>
+                                <td>3rd</td>
+                                <td>$7.23</td>
+                                <td>C</td>
+                                <td><span class="badge bg-success">Survived</span></td>
+                                <td><span class="badge bg-danger">Died</span></td>
+                                <td>0.28</td>
+                            </tr>
+                            <tr>
+                                <td>413</td>
+                                <td>Pokrnic, Mr. Mate</td>
+                                <td>17</td>
+                                <td>Male</td>
+                                <td>3rd</td>
+                                <td>$8.66</td>
+                                <td>S</td>
+                                <td><span class="badge bg-success">Survived</span></td>
+                                <td><span class="badge bg-danger">Died</span></td>
+                                <td>0.41</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="mt-3 text-center">
+                    <button type="button" class="btn btn-primary" id="btn-download-misclassified">
+                        <i class="fas fa-download me-1"></i>Download Misclassified Examples
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Model Details Modal -->
+<div class="modal fade" id="modelDetailsModal" tabindex="-1" aria-labelledby="modelDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="modelDetailsModalLabel">Model Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Model Parameters</h6>
+                        <table class="table table-sm">
+                            <tbody id="model-params">
+                                <!-- Will be filled dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Performance Metrics</h6>
+                        <table class="table table-sm">
+                            <tbody id="model-metrics">
+                                <!-- Will be filled dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <h6>Confusion Matrix</h6>
+                        <div id="modal-confusion-matrix" style="height: 250px;"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>ROC Curve</h6>
+                        <div id="modal-roc-curve" style="height: 250px;"></div>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <h6>Feature Importance</h6>
+                        <div id="modal-feature-importance" style="height: 300px;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btn-use-model">Use This Model</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // In a real application, these charts would be populated with real data
+    // using a library like Plotly.js or Chart.js
+    
+    // Placeholder for performance chart
+    document.getElementById('performance-chart').innerHTML = '<div class="alert alert-info">Performance chart would be rendered here with real data</div>';
+    
+    // Placeholder for ROC curves chart
+    document.getElementById('roc-curves-chart').innerHTML = '<div class="alert alert-info">ROC curves chart would be rendered here with real data</div>';
+    
+    // Placeholder for feature importance chart
+    document.getElementById('feature-importance-chart').innerHTML = '<div class="alert alert-info">Feature importance chart would be rendered here with real data</div>';
+    
+    // Handle view details button clicks
+    const viewDetailsButtons = document.querySelectorAll('.view-details-btn');
+    viewDetailsButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const modelName = this.getAttribute('data-model');
+            showModelDetails(modelName);
+        });
+    });
+    
+    // Handle metric selection for performance chart
+    const metricButtons = document.querySelectorAll('[data-metric]');
+    metricButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove active class from all buttons
+            metricButtons.forEach(btn => btn.classList.remove('active'));
+            // Add active class to clicked button
+            this.classList.add('active');
+            
+            const metric = this.getAttribute('data-metric');
+            updatePerformanceChart(metric);
+        });
+    });
+    
+    // Handle model selection for ROC curves
+    const modelCheckboxes = document.querySelectorAll('[data-model]');
+    modelCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            updateRocCurvesChart();
+        });
+    });
+    
+    // Handle model selection for feature importance
+    const featureImportanceButtons = document.querySelectorAll('[data-model]');
+    featureImportanceButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove active class from all buttons in the group
+            this.parentElement.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+            // Add active class to clicked button
+            this.classList.add('active');
+            
+            const model = this.getAttribute('data-model');
+            updateFeatureImportanceChart(model);
+        });
+    });
+    
+    // Download misclassified examples button
+    document.getElementById('btn-download-misclassified').addEventListener('click', function() {
+        alert('In a real app, this would download the misclassified examples.');
+    });
+    
+    // Use model button in modal
+    document.getElementById('btn-use-model').addEventListener('click', function() {
+        // Close the modal
+        const modalElement = document.getElementById('modelDetailsModal');
+        const modal = bootstrap.Modal.getInstance(modalElement);
+        modal.hide();
+        
+        // Redirect to predict page
+        window.location.href = "{{ url_for('predict') }}";
+    });
+    
+    // Function to show model details in modal
+    function showModelDetails(modelName) {
+        // In a real app, this would fetch details from the server
+        
+        // For demonstration, set modal title based on model name
+        let modelTitle = 'Unknown Model';
+        switch(modelName) {
+            case 'gradient_boosting':
+                modelTitle = 'Gradient Boosting';
+                break;
+            case 'random_forest':
+                modelTitle = 'Random Forest';
+                break;
+            case 'svm':
+                modelTitle = 'Support Vector Machine';
+                break;
+            case 'logistic_regression':
+                modelTitle = 'Logistic Regression';
+                break;
+            case 'knn':
+                modelTitle = 'K-Nearest Neighbors';
+                break;
+            case 'decision_tree':
+                modelTitle = 'Decision Tree';
+                break;
+        }
+        
+        document.getElementById('modelDetailsModalLabel').textContent = modelTitle + ' Details';
+        
+        // Fill in placeholder content
+        document.getElementById('model-params').innerHTML = '<tr><th>Placeholder</th><td>Parameter values would be shown here</td></tr>';
+        document.getElementById('model-metrics').innerHTML = '<tr><th>Placeholder</th><td>Metric values would be shown here</td></tr>';
+        document.getElementById('modal-confusion-matrix').innerHTML = '<div class="alert alert-info">Confusion matrix would be rendered here</div>';
+        document.getElementById('modal-roc-curve').innerHTML = '<div class="alert alert-info">ROC curve would be rendered here</div>';
+        document.getElementById('modal-feature-importance').innerHTML = '<div class="alert alert-info">Feature importance would be rendered here</div>';
+        
+        // Show the modal
+        const modalElement = document.getElementById('modelDetailsModal');
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();
+    }
+    
+    // Functions to update charts based on selections
+    function updatePerformanceChart(metric) {
+        // In a real app, this would update the chart based on the selected metric
+        console.log('Updating performance chart with metric:', metric);
+    }
+    
+    function updateRocCurvesChart() {
+        // In a real app, this would update the ROC curves chart based on selected models
+        const selectedModels = [];
+        document.querySelectorAll('[data-model]:checked').forEach(checkbox => {
+            selectedModels.push(checkbox.getAttribute('data-model'));
+        });
+        console.log('Updating ROC curves chart with models:', selectedModels);
+    }
+    
+    function updateFeatureImportanceChart(model) {
+        // In a real app, this would update the feature importance chart for the selected model
+        console.log('Updating feature importance chart for model:', model);
+    }
+});
+</script>
+{% endblock %}

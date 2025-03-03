@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+{% block title %}Features - Titanic Survival Predictor{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <h1 class="card-title">
+                    <i class="fas fa-chart-bar text-primary me-2"></i>Feature Exploration
+                </h1>
+                <p class="lead">
+                    Explore the Titanic dataset features and their relationship with survival.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-4 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header bg-primary text-white">
+                <h4 class="card-title mb-0">Dataset Overview</h4>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <tbody>
+                        <tr>
+                            <th>Total Passengers:</th>
+                            <td>{{ dataset_stats.total_passengers }}</td>
+                        </tr>
+                        <tr>
+                            <th>Survival Rate:</th>
+                            <td>{{ dataset_stats.survival_rate|round(2) }}%</td>
+                        </tr>
+                        <tr>
+                            <th>Average Age:</th>
+                            <td>{{ dataset_stats.avg_age|round(2) }} years</td>
+                        </tr>
+                        <tr>
+                            <th>Average Fare:</th>
+                            <td>${{ dataset_stats.avg_fare|round(2) }}</td>
+                        </tr>
+                        <tr>
+                            <th>Male Passengers:</th>
+                            <td>{{ dataset_stats.male_count }} ({{ dataset_stats.male_pct|round(2) }}%)</td>
+                        </tr>
+                        <tr>
+                            <th>Female Passengers:</th>
+                            <td>{{ dataset_stats.female_count }} ({{ dataset_stats.female_pct|round(2) }}%)</td>
+                        </tr>
+                        <tr>
+                            <th>Missing Age Values:</th>
+                            <td>{{ dataset_stats.missing_age }} ({{ dataset_stats.missing_age_pct|round(2) }}%)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-8 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header bg-primary text-white">
+                <h4 class="card-title mb-0">Survival by Class and Gender</h4>
+            </div>
+            <div class="card-body">
+                <div id="survival-by-class-gender" style="height: 400px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6 mb-4 mb-md-0">
+        <div class="card shadow h-100">
+            <div class="card-header bg-primary text-white">
+                <h4 class="card-title mb-0">Survival by Age</h4>
+            </div>
+            <div class="card-body">
+                <div id="survival-by-age" style="height: 350px;"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card shadow h-100">
+            <div class="card-header bg-primary text-white">
+                <h4 class="card-title mb-0">Survival by Family Size</h4>
+            </div>
+            <div class="card-body">
+                <div id="survival-by-family" style="height: 350px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-12">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="card-title mb-0">Feature Selection</h4>
+            </div>
+            <div class="card-body">
+                <h5 class="card-subtitle mb-3">Top Features by Importance</h5>
+                <div id="feature-importance" style="height: 400px;"></div>
+                
+                <div class="mt-3">
+                    <h5 class="card-subtitle mb-3">Feature Selection Method</h5>
+                    <form id="feature-selection-form" class="row g-3">
+                        <div class="col-md-4">
+                            <label for="selection-method" class="form-label">Selection Method:</label>
+                            <select id="selection-method" class="form-select">
+                                <option value="random_forest">Random Forest Importance</option>
+                                <option value="mutual_info">Mutual Information</option>
+                                <option value="chi2">Chi-Square Test</option>
+                                <option value="rfe">Recursive Feature Elimination</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="n-features" class="form-label">Number of Features:</label>
+                            <input type="number" id="n-features" class="form-control" min="1" max="20" value="10">
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-filter me-1"></i>Apply Selection
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="card-title mb-0">Feature Engineering</h4>
+            </div>
+            <div class="card-body">
+                <p>
+                    Feature engineering is crucial for improving model performance. The following features have been created from the original dataset:
+                </p>
+                
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>Description</th>
+                                <th>Impact on Survival</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Title</td>
+                                <td>Extracted from name (e.g., Mr, Mrs, Miss)</td>
+                                <td>High - Titles correlate with age, gender, and social status</td>
+                            </tr>
+                            <tr>
+                                <td>FamilySize</td>
+                                <td>Combined SibSp and Parch + 1</td>
+                                <td>Medium - Single passengers and large families had lower survival rates</td>
+                            </tr>
+                            <tr>
+                                <td>IsAlone</td>
+                                <td>Binary indicator if passenger traveled alone</td>
+                                <td>Medium - Single passengers had lower survival rates</td>
+                            </tr>
+                            <tr>
+                                <td>AgeGroup</td>
+                                <td>Age categorized into groups</td>
+                                <td>Medium - Children had higher survival rates</td>
+                            </tr>
+                            <tr>
+                                <td>FareCategory</td>
+                                <td>Fare categorized into groups</td>
+                                <td>Medium - Higher fares correlate with higher survival rates</td>
+                            </tr>
+                            <tr>
+                                <td>CabinDeck</td>
+                                <td>Deck extracted from cabin number</td>
+                                <td>Medium - Higher decks had better survival rates</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <a href="#" id="btn-create-features" class="btn btn-primary mt-3">
+                    <i class="fas fa-magic me-1"></i>Generate Enhanced Features
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// This would typically be populated from the server with real data
+document.addEventListener('DOMContentLoaded', function() {
+    // Survival by Class and Gender
+    const survivalByClassGenderData = {
+        type: 'bar',
+        data: {
+            // This would be replaced with actual data from the server
+            labels: ['1st Class Male', '1st Class Female', '2nd Class Male', '2nd Class Female', '3rd Class Male', '3rd Class Female'],
+            datasets: [{
+                label: 'Survival Rate (%)',
+                data: [34.5, 97.2, 16.2, 88.5, 14.8, 50.0],
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.7)',
+                    'rgba(255, 99, 132, 0.7)',
+                    'rgba(54, 162, 235, 0.7)',
+                    'rgba(255, 99, 132, 0.7)',
+                    'rgba(54, 162, 235, 0.7)',
+                    'rgba(255, 99, 132, 0.7)'
+                ]
+            }]
+        }
+    };
+    
+    // Initialize charts with placeholders
+    // In a real application, these would be populated with data from the server
+    
+    // This is placeholder code - in a real app these would be initialized with Plotly or another chart library
+    document.getElementById('survival-by-class-gender').innerHTML = '<div class="alert alert-info">Chart would be rendered here with real data</div>';
+    document.getElementById('survival-by-age').innerHTML = '<div class="alert alert-info">Chart would be rendered here with real data</div>';
+    document.getElementById('survival-by-family').innerHTML = '<div class="alert alert-info">Chart would be rendered here with real data</div>';
+    document.getElementById('feature-importance').innerHTML = '<div class="alert alert-info">Chart would be rendered here with real data</div>';
+    
+    // Add event listeners
+    document.getElementById('feature-selection-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        alert('Feature selection would be applied with the selected method');
+    });
+    
+    document.getElementById('btn-create-features').addEventListener('click', function(e) {
+        e.preventDefault();
+        alert('Enhanced features would be generated');
+    });
+});
+</script>
+{% endblock %}
