@@ -50,46 +50,58 @@ def create_app():
         try:
             # Get dataset statistics for the template
             data_loader = DataLoader()
-            train_data = data_loader.load_train_data()
             
-            if train_data is None:
-                flash("Error loading training data. Please check data files.", "error")
-                return render_template('features.html', dataset_stats={})
+            try:
+                train_data = data_loader.load_train_data()
+                
+                if train_data is None:
+                    flash("Error loading training data. Please check data files.", "error")
+                    return render_template('features.html', dataset_stats={})
+                
+                # Calculate basic statistics
+                total_passengers = len(train_data)
+                survival_count = train_data['Survived'].sum()
+                survival_rate = (survival_count / total_passengers) * 100
+                
+                avg_age = train_data['Age'].mean()
+                avg_fare = train_data['Fare'].mean()
+                
+                male_data = train_data[train_data['Sex'] == 'male']
+                female_data = train_data[train_data['Sex'] == 'female']
+                male_count = len(male_data)
+                female_count = len(female_data)
+                male_pct = (male_count / total_passengers) * 100
+                female_pct = (female_count / total_passengers) * 100
+                
+                missing_age = train_data['Age'].isnull().sum()
+                missing_age_pct = (missing_age / total_passengers) * 100
+                
+                # Create statistics dictionary
+                dataset_stats = {
+                    'total_passengers': total_passengers,
+                    'survival_count': survival_count,
+                    'survival_rate': survival_rate,
+                    'avg_age': avg_age,
+                    'avg_fare': avg_fare,
+                    'male_count': male_count,
+                    'female_count': female_count,
+                    'male_pct': male_pct,
+                    'female_pct': female_pct,
+                    'missing_age': missing_age,
+                    'missing_age_pct': missing_age_pct
+                }
+                
+                return render_template('features.html', dataset_stats=dataset_stats)
             
-            # Calculate basic statistics
-            total_passengers = len(train_data)
-            survival_count = train_data['Survived'].sum()
-            survival_rate = (survival_count / total_passengers) * 100
+            except FileNotFoundError:
+                error_msg = "Training data file not found. Please make sure train.csv is placed in the data directory."
+                logger.warning(error_msg)
+                flash(error_msg, "warning")
+                
+                # Pass empty but properly initialized stats dictionary to template
+                dataset_stats = {}
+                return render_template('features.html', dataset_stats=dataset_stats)
             
-            avg_age = train_data['Age'].mean()
-            avg_fare = train_data['Fare'].mean()
-            
-            male_data = train_data[train_data['Sex'] == 'male']
-            female_data = train_data[train_data['Sex'] == 'female']
-            male_count = len(male_data)
-            female_count = len(female_data)
-            male_pct = (male_count / total_passengers) * 100
-            female_pct = (female_count / total_passengers) * 100
-            
-            missing_age = train_data['Age'].isnull().sum()
-            missing_age_pct = (missing_age / total_passengers) * 100
-            
-            # Create statistics dictionary
-            dataset_stats = {
-                'total_passengers': total_passengers,
-                'survival_count': survival_count,
-                'survival_rate': survival_rate,
-                'avg_age': avg_age,
-                'avg_fare': avg_fare,
-                'male_count': male_count,
-                'female_count': female_count,
-                'male_pct': male_pct,
-                'female_pct': female_pct,
-                'missing_age': missing_age,
-                'missing_age_pct': missing_age_pct
-            }
-            
-            return render_template('features.html', dataset_stats=dataset_stats)
         except Exception as e:
             logger.error(f"Error in features route: {e}")
             flash(f"An error occurred while loading feature data: {str(e)}", "error")
