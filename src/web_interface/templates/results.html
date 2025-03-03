@@ -2,6 +2,12 @@
 
 {% block title %}Results - Titanic Survival Predictor{% endblock %}
 
+{% block head %}
+{{ super() }}
+<!-- Add Plotly.js for data visualization -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+{% endblock %}
+
 {% block content %}
 <div class="row mb-4">
     <div class="col-md-12">
@@ -179,7 +185,13 @@
                 <h4 class="card-title mb-0">Model Performance Comparison</h4>
             </div>
             <div class="card-body">
-                <div id="performance-chart" style="height: 400px;"></div>
+                <div id="performance-chart" style="height: 400px;">
+                    <div class="d-flex justify-content-center align-items-center h-100">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
                 <div class="text-center mt-3">
                     <div class="btn-group" role="group">
                         <button type="button" class="btn btn-outline-primary active" data-metric="accuracy">Accuracy</button>
@@ -199,7 +211,9 @@
                 <h4 class="card-title mb-0">ROC Curves Comparison</h4>
             </div>
             <div class="card-body">
-                <div id="roc-curves-chart" style="height: 400px;"></div>
+                <div id="roc-curves-chart" style="height: 400px;">
+                    <div class="alert alert-info">Select models below to display ROC curves</div>
+                </div>
                 <div class="mt-3 text-center">
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="checkbox" id="model-gb" checked data-model="gradient_boosting">
@@ -230,7 +244,13 @@
                 <h4 class="card-title mb-0">Feature Importance Across Models</h4>
             </div>
             <div class="card-body">
-                <div id="feature-importance-chart" style="height: 400px;"></div>
+                <div id="feature-importance-chart" style="height: 400px;">
+                    <div class="d-flex justify-content-center align-items-center h-100">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
                 <div class="mt-3 text-center">
                     <div class="btn-group" role="group">
                         <button type="button" class="btn btn-outline-primary active" data-model="gradient_boosting">Gradient Boosting</button>
@@ -359,6 +379,7 @@
                         <table class="table table-sm">
                             <tbody id="model-params">
                                 <!-- Will be filled dynamically -->
+                                <tr><td colspan="2" class="text-center">Loading...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -367,6 +388,7 @@
                         <table class="table table-sm">
                             <tbody id="model-metrics">
                                 <!-- Will be filled dynamically -->
+                                <tr><td colspan="2" class="text-center">Loading...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -375,18 +397,36 @@
                 <div class="row mt-3">
                     <div class="col-md-6">
                         <h6>Confusion Matrix</h6>
-                        <div id="modal-confusion-matrix" style="height: 250px;"></div>
+                        <div id="modal-confusion-matrix" style="height: 250px;">
+                            <div class="d-flex justify-content-center align-items-center h-100">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-md-6">
                         <h6>ROC Curve</h6>
-                        <div id="modal-roc-curve" style="height: 250px;"></div>
+                        <div id="modal-roc-curve" style="height: 250px;">
+                            <div class="d-flex justify-content-center align-items-center h-100">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
                 <div class="row mt-3">
                     <div class="col-md-12">
                         <h6>Feature Importance</h6>
-                        <div id="modal-feature-importance" style="height: 300px;"></div>
+                        <div id="modal-feature-importance" style="height: 300px;">
+                            <div class="d-flex justify-content-center align-items-center h-100">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -525,425 +565,6 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // In a real application, these charts would be populated with real data
-    // using a library like Plotly.js or Chart.js
-    
-    // Placeholder for performance chart
-    document.getElementById('performance-chart').innerHTML = '<div class="alert alert-info">Performance chart would be rendered here with real data</div>';
-    
-    // Placeholder for ROC curves chart
-    document.getElementById('roc-curves-chart').innerHTML = '<div class="alert alert-info">ROC curves chart would be rendered here with real data</div>';
-    
-    // Placeholder for feature importance chart
-    document.getElementById('feature-importance-chart').innerHTML = '<div class="alert alert-info">Feature importance chart would be rendered here with real data</div>';
-    
-    // Handle view details button clicks
-    const viewDetailsButtons = document.querySelectorAll('.view-details-btn');
-    viewDetailsButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const modelName = this.getAttribute('data-model');
-            showModelDetails(modelName);
-        });
-    });
-    
-    // Handle metric selection for performance chart
-    const metricButtons = document.querySelectorAll('[data-metric]');
-    metricButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            // Remove active class from all buttons
-            metricButtons.forEach(btn => btn.classList.remove('active'));
-            // Add active class to clicked button
-            this.classList.add('active');
-            
-            const metric = this.getAttribute('data-metric');
-            updatePerformanceChart(metric);
-        });
-    });
-    
-    // Handle model selection for ROC curves
-    const modelCheckboxes = document.querySelectorAll('[data-model]');
-    modelCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            updateRocCurvesChart();
-        });
-    });
-    
-    // Handle model selection for feature importance
-    const featureImportanceButtons = document.querySelectorAll('[data-model]');
-    featureImportanceButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            // Remove active class from all buttons in the group
-            this.parentElement.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
-            // Add active class to clicked button
-            this.classList.add('active');
-            
-            const model = this.getAttribute('data-model');
-            updateFeatureImportanceChart(model);
-        });
-    });
-    
-    // Download misclassified examples button
-    document.getElementById('btn-download-misclassified').addEventListener('click', function() {
-        alert('In a real app, this would download the misclassified examples.');
-    });
-    
-    // Use model button in modal
-    document.getElementById('btn-use-model').addEventListener('click', function() {
-        // Close the modal
-        const modalElement = document.getElementById('modelDetailsModal');
-        const modal = bootstrap.Modal.getInstance(modalElement);
-        modal.hide();
-        
-        // Redirect to predict page
-        window.location.href = "{{ url_for('predict') }}";
-    });
-    
-    // Generate submission buttons
-    const generateSubmissionButtons = document.querySelectorAll('.generate-submission-btn');
-    generateSubmissionButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const modelName = this.getAttribute('data-model');
-            showSubmissionModal(modelName);
-        });
-    });
-    
-    // Generate submission button in model details modal
-    document.getElementById('btn-generate-submission').addEventListener('click', function() {
-        const modelName = document.getElementById('modelDetailsModalLabel').textContent.split(' ')[0].toLowerCase().replace(' ', '_');
-        
-        // Close the current modal
-        const modalElement = document.getElementById('modelDetailsModal');
-        const modal = bootstrap.Modal.getInstance(modalElement);
-        modal.hide();
-        
-        // Show submission modal
-        showSubmissionModal(modelName);
-    });
-    
-    // Submission form submit
-    document.getElementById('btn-submit-submission').addEventListener('click', function() {
-        const form = document.getElementById('submission-form');
-        const formData = new FormData(form);
-        
-        // In a real app, this would submit the form to the server
-        console.log('Generating submission with data:', Object.fromEntries(formData));
-        
-        // Show success message (this would normally happen after server response)
-        showSubmissionResult({
-            success: true,
-            path: '/submissions/submission_random_forest_20220101_120000.csv',
-            file_name: 'submission_random_forest_20220101_120000.csv',
-            validation: {
-                valid: true,
-                warnings: ['Unusual survival rate: 32.5%. Expected range is 15-50%.']
-            },
-            statistics: {
-                total_count: 418,
-                survivor_count: 136,
-                survival_rate: 32.5
-            }
-        });
-    });
-    
-    // New submission button
-    document.getElementById('btn-new-submission').addEventListener('click', function() {
-        // Reset the form
-        document.getElementById('submission-form').reset();
-        
-        // Hide result and show form
-        document.getElementById('submission-result').classList.add('d-none');
-        document.getElementById('submission-form').classList.remove('d-none');
-        document.getElementById('submission-modal-footer').classList.remove('d-none');
-    });
-    
-    // Download submission button
-    document.getElementById('btn-download-submission').addEventListener('click', function() {
-        // In a real app, this would download the submission file
-        alert('In a real app, this would download the submission file.');
-    });
-    
-    // Kaggle submissions button
-    document.getElementById('btn-kaggle-submissions').addEventListener('click', function() {
-        showSubmissionsList();
-    });
-    
-    // Refresh submissions list
-    document.getElementById('btn-refresh-submissions').addEventListener('click', function() {
-        // In a real app, this would refresh the submissions list from the server
-        loadSubmissionsList();
-    });
-    
-    // Compare selected submissions
-    document.getElementById('btn-compare-submissions').addEventListener('click', function() {
-        // Get selected submissions
-        const selected = [];
-        document.querySelectorAll('#submissions-table tbody input[type="checkbox"]:checked').forEach(checkbox => {
-            selected.push(checkbox.getAttribute('data-file'));
-        });
-        
-        if (selected.length < 2) {
-            alert('Please select at least two submissions to compare.');
-            return;
-        }
-        
-        // In a real app, this would send the selected submissions to the server for comparison
-        console.log('Comparing submissions:', selected);
-        
-        // Show comparison results (this would normally happen after server response)
-        showComparisonResults({
-            comparisons: [
-                { 'Comparison': 'submission1 vs submission2', 'Agreement (%)': 95.2, 'Differences': 20 },
-                { 'Comparison': 'submission1 vs submission3', 'Agreement (%)': 92.8, 'Differences': 30 },
-                { 'Comparison': 'submission2 vs submission3', 'Agreement (%)': 94.5, 'Differences': 23 }
-            ]
-        });
-    });
-    
-    // Select all submissions checkbox
-    document.getElementById('select-all-submissions').addEventListener('change', function() {
-        const checkboxes = document.querySelectorAll('#submissions-table tbody input[type="checkbox"]');
-        checkboxes.forEach(checkbox => {
-            checkbox.checked = this.checked;
-        });
-    });
-    
-    // Function to show model details in modal
-    function showModelDetails(modelName) {
-        // In a real app, this would fetch details from the server
-        
-        // For demonstration, set modal title based on model name
-        let modelTitle = 'Unknown Model';
-        switch(modelName) {
-            case 'gradient_boosting':
-                modelTitle = 'Gradient Boosting';
-                break;
-            case 'random_forest':
-                modelTitle = 'Random Forest';
-                break;
-            case 'svm':
-                modelTitle = 'Support Vector Machine';
-                break;
-            case 'logistic_regression':
-                modelTitle = 'Logistic Regression';
-                break;
-            case 'knn':
-                modelTitle = 'K-Nearest Neighbors';
-                break;
-            case 'decision_tree':
-                modelTitle = 'Decision Tree';
-                break;
-        }
-        
-        document.getElementById('modelDetailsModalLabel').textContent = modelTitle + ' Details';
-        
-        // Fill in placeholder content
-        document.getElementById('model-params').innerHTML = '<tr><th>Placeholder</th><td>Parameter values would be shown here</td></tr>';
-        document.getElementById('model-metrics').innerHTML = '<tr><th>Placeholder</th><td>Metric values would be shown here</td></tr>';
-        document.getElementById('modal-confusion-matrix').innerHTML = '<div class="alert alert-info">Confusion matrix would be rendered here</div>';
-        document.getElementById('modal-roc-curve').innerHTML = '<div class="alert alert-info">ROC curve would be rendered here</div>';
-        document.getElementById('modal-feature-importance').innerHTML = '<div class="alert alert-info">Feature importance would be rendered here</div>';
-        
-        // Show the modal
-        const modalElement = document.getElementById('modelDetailsModal');
-        const modal = new bootstrap.Modal(modalElement);
-        modal.show();
-    }
-    
-    // Function to show submission modal
-    function showSubmissionModal(modelName) {
-        // Set the model name in the form
-        document.getElementById('submission-model').value = modelName;
-        
-        // Set a default file name
-        const now = new Date();
-        const dateStr = now.getFullYear() + 
-            ('0' + (now.getMonth() + 1)).slice(-2) + 
-            ('0' + now.getDate()).slice(-2) + '_' + 
-            ('0' + now.getHours()).slice(-2) + 
-            ('0' + now.getMinutes()).slice(-2) + 
-            ('0' + now.getSeconds()).slice(-2);
-        
-        document.getElementById('submission-file-name').placeholder = `submission_${modelName}_${dateStr}.csv`;
-        
-        // Reset form and hide result
-        document.getElementById('submission-form').reset();
-        document.getElementById('submission-result').classList.add('d-none');
-        document.getElementById('submission-form').classList.remove('d-none');
-        document.getElementById('submission-modal-footer').classList.remove('d-none');
-        
-        // Update modal title
-        let modelTitle = 'Unknown Model';
-        switch(modelName) {
-            case 'gradient_boosting':
-                modelTitle = 'Gradient Boosting';
-                break;
-            case 'random_forest':
-                modelTitle = 'Random Forest';
-                break;
-            case 'svm':
-                modelTitle = 'Support Vector Machine';
-                break;
-            case 'logistic_regression':
-                modelTitle = 'Logistic Regression';
-                break;
-            case 'knn':
-                modelTitle = 'K-Nearest Neighbors';
-                break;
-            case 'decision_tree':
-                modelTitle = 'Decision Tree';
-                break;
-        }
-        
-        document.getElementById('submissionModalLabel').textContent = `Generate ${modelTitle} Submission`;
-        
-        // Show the modal
-        const modalElement = document.getElementById('submissionModal');
-        const modal = new bootstrap.Modal(modalElement);
-        modal.show();
-    }
-    
-    // Function to show submission result
-    function showSubmissionResult(result) {
-        if (result.success) {
-            // Set file path
-            document.getElementById('submission-file-path').textContent = result.path;
-            
-            // Set validation results
-            const validationList = document.getElementById('submission-validation');
-            validationList.innerHTML = '';
-            
-            if (result.validation.valid) {
-                validationList.innerHTML += '<li class="text-success">Submission is valid</li>';
-            } else {
-                validationList.innerHTML += '<li class="text-danger">Submission has errors</li>';
-            }
-            
-            if (result.validation.warnings && result.validation.warnings.length > 0) {
-                result.validation.warnings.forEach(warning => {
-                    validationList.innerHTML += `<li class="text-warning">${warning}</li>`;
-                });
-            }
-            
-            // Set statistics
-            const statsList = document.getElementById('submission-stats');
-            statsList.innerHTML = '';
-            statsList.innerHTML += `<li>Total passengers: ${result.statistics.total_count}</li>`;
-            statsList.innerHTML += `<li>Predicted survivors: ${result.statistics.survivor_count} (${result.statistics.survival_rate.toFixed(1)}%)</li>`;
-            statsList.innerHTML += `<li>Predicted casualties: ${result.statistics.total_count - result.statistics.survivor_count} (${(100 - result.statistics.survival_rate).toFixed(1)}%)</li>`;
-            
-            // Hide form and show result
-            document.getElementById('submission-form').classList.add('d-none');
-            document.getElementById('submission-result').classList.remove('d-none');
-            document.getElementById('submission-modal-footer').classList.add('d-none');
-        } else {
-            // Show error
-            alert(`Error generating submission: ${result.error}`);
-        }
-    }
-    
-    // Function to show submissions list
-    function showSubmissionsList() {
-        // Load submissions list
-        loadSubmissionsList();
-        
-        // Reset comparison results
-        document.getElementById('submission-comparison-result').classList.add('d-none');
-        
-        // Show modal
-        const modalElement = document.getElementById('submissionsListModal');
-        const modal = new bootstrap.Modal(modalElement);
-        modal.show();
-    }
-    
-    // Function to load submissions list
-    function loadSubmissionsList() {
-        // In a real app, this would fetch submissions from the server
-        
-        // For demonstration, show sample data
-        const submissionsTable = document.getElementById('submissions-table').querySelector('tbody');
-        submissionsTable.innerHTML = `
-            <tr>
-                <td><input type="checkbox" data-file="submission_random_forest_20220101.csv"></td>
-                <td>submission_random_forest_20220101.csv</td>
-                <td>2022-01-01 12:00:00</td>
-                <td>32.5%</td>
-                <td>Random Forest with feature engineering</td>
-                <td>
-                    <button class="btn btn-sm btn-primary">Download</button>
-                    <button class="btn btn-sm btn-danger">Delete</button>
-                </td>
-            </tr>
-            <tr>
-                <td><input type="checkbox" data-file="submission_gradient_boosting_20220102.csv"></td>
-                <td>submission_gradient_boosting_20220102.csv</td>
-                <td>2022-01-02 14:30:00</td>
-                <td>31.8%</td>
-                <td>Gradient Boosting with hyperparameter tuning</td>
-                <td>
-                    <button class="btn btn-sm btn-primary">Download</button>
-                    <button class="btn btn-sm btn-danger">Delete</button>
-                </td>
-            </tr>
-            <tr>
-                <td><input type="checkbox" data-file="submission_svm_20220103.csv"></td>
-                <td>submission_svm_20220103.csv</td>
-                <td>2022-01-03 09:45:00</td>
-                <td>29.4%</td>
-                <td>SVM with RBF kernel</td>
-                <td>
-                    <button class="btn btn-sm btn-primary">Download</button>
-                    <button class="btn btn-sm btn-danger">Delete</button>
-                </td>
-            </tr>
-        `;
-    }
-    
-    // Function to show comparison results
-    function showComparisonResults(data) {
-        // In a real app, this would display charts and tables based on server data
-        
-        // For demonstration, show sample data
-        const comparisonTable = document.getElementById('comparison-table').querySelector('tbody');
-        comparisonTable.innerHTML = '';
-        
-        data.comparisons.forEach(comparison => {
-            comparisonTable.innerHTML += `
-                <tr>
-                    <td>${comparison.Comparison}</td>
-                    <td>${comparison['Agreement (%)'].toFixed(1)}%</td>
-                    <td>${comparison.Differences}</td>
-                </tr>
-            `;
-        });
-        
-        // Show placeholder for chart
-        document.getElementById('comparison-chart').innerHTML = '<div class="alert alert-info">Comparison chart would be rendered here</div>';
-        
-        // Show comparison results
-        document.getElementById('submission-comparison-result').classList.remove('d-none');
-    }
-    
-    // Functions to update charts based on selections
-    function updatePerformanceChart(metric) {
-        // In a real app, this would update the chart based on the selected metric
-        console.log('Updating performance chart with metric:', metric);
-    }
-    
-    function updateRocCurvesChart() {
-        // In a real app, this would update the ROC curves chart based on selected models
-        const selectedModels = [];
-        document.querySelectorAll('[data-model]:checked').forEach(checkbox => {
-            selectedModels.push(checkbox.getAttribute('data-model'));
-        });
-        console.log('Updating ROC curves chart with models:', selectedModels);
-    }
-    
-    function updateFeatureImportanceChart(model) {
-        // In a real app, this would update the feature importance chart for the selected model
-        console.log('Updating feature importance chart for model:', model);
-    }
-});
-</script>
+<!-- Include the results JavaScript file -->
+<script src="{{ url_for('static', filename='js/results.js') }}"></script>
 {% endblock %}
