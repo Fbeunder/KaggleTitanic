@@ -112,6 +112,7 @@ De applicatie wordt opgedeeld in de volgende modules:
   - Routering voor alle pagina's (/, /features, /train, /predict, /results)
   - API endpoints voor modelgegevens en voorspellingen
   - API endpoints voor Kaggle submissions
+  - API endpoints voor model visualisaties (confusion matrix, ROC curves, feature importance)
   - Error handling voor 404 en 500 fouten
   - Integratie met alle model en data componenten
 - **Afhankelijkheid**: Alle andere modules
@@ -155,6 +156,7 @@ De applicatie wordt opgedeeld in de volgende modules:
 - **Functionaliteit**:
   - CSS styling voor een consistent en gebruiksvriendelijk design
   - JavaScript voor interactieve elementen en visualisaties
+  - results.js: Script voor het renderen van model visualisaties (confusion matrix, ROC curve, feature importance)
 - **Afhankelijkheid**: Geen
 
 ## 5. Utilities
