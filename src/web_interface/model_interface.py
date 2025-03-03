@@ -188,6 +188,12 @@ class ModelInterface:
             end_time = datetime.now()
             training_time = (end_time - start_time).total_seconds()
             
+            # Get predictions for ROC curve
+            y_pred = trained_model.predict(self.X_train)
+            y_pred_proba = None
+            if hasattr(trained_model, 'predict_proba'):
+                y_pred_proba = trained_model.predict_proba(self.X_train)[:, 1]
+            
             # Store the model and metrics
             self.trained_models[model_name] = trained_model
             self.model_evaluations[model_name] = {
@@ -195,11 +201,15 @@ class ModelInterface:
                 'cv_results': cv_results,
                 'training_time': training_time,
                 'params': model.get_params(),
-                'feature_importance': self._get_feature_importance(trained_model, model_name)
+                'feature_importance': self._get_feature_importance(trained_model, model_name),
+                'y_true': self.y_train.values,  # Store for ROC curves
+                'y_pred': y_pred,
+                'y_pred_proba': y_pred_proba
             }
             
-            # Save the model
+            # Save the model and its evaluations
             self._save_model(model_name, trained_model)
+            self._save_model_evaluation(model_name, self.model_evaluations[model_name])
             
             logger.info(f"Successfully trained {model_name}. Metrics: {metrics}")
             return True
@@ -442,14 +452,26 @@ class ModelInterface:
         """
         try:
             if model_name:
+                # First check if we have the model evaluation in memory
                 if model_name in self.model_evaluations:
+                    logger.info(f"Found model evaluation for {model_name} in memory")
                     return self.model_evaluations[model_name]
                 else:
-                    logger.warning(f"Model {model_name} not found in evaluations")
-                    return None
+                    # Try to load from disk
+                    logger.info(f"Attempting to load model evaluation for {model_name} from disk")
+                    evaluation = self._load_model_evaluation(model_name)
+                    if evaluation:
+                        # Store in memory for future use
+                        self.model_evaluations[model_name] = evaluation
+                        return evaluation
+                    else:
+                        logger.warning(f"Model {model_name} evaluation not found")
+                        return None
             else:
                 # Return all model evaluations
                 all_models = []
+                
+                # First check in-memory evaluations
                 for name, evaluation in self.model_evaluations.items():
                     model_info = {
                         'name': name,
@@ -457,6 +479,20 @@ class ModelInterface:
                         'training_time': evaluation['training_time']
                     }
                     all_models.append(model_info)
+                
+                # Then check saved evaluations
+                saved_models = self._list_saved_model_evaluations()
+                for name in saved_models:
+                    if name not in [model['name'] for model in all_models]:
+                        evaluation = self._load_model_evaluation(name)
+                        if evaluation:
+                            model_info = {
+                                'name': name,
+                                'metrics': evaluation['metrics'],
+                                'training_time': evaluation.get('training_time', 0)
+                            }
+                            all_models.append(model_info)
+                
                 return all_models
         except Exception as e:
             logger.error(f"Error in get_model_performance: {e}")
@@ -473,10 +509,17 @@ class ModelInterface:
             list: List of (feature, importance) tuples.
         """
         try:
-            if model_name in self.model_evaluations:
+            # First check if we have the model evaluation in memory
+            if model_name in self.model_evaluations and 'feature_importance' in self.model_evaluations[model_name]:
                 return self.model_evaluations[model_name]['feature_importance']
             else:
-                # Try to load model and compute feature importance
+                # Try to load from disk
+                evaluation = self._load_model_evaluation(model_name)
+                if evaluation and 'feature_importance' in evaluation:
+                    return evaluation['feature_importance']
+                
+                # If no saved evaluation or feature importance not in evaluation,
+                # try to load model and compute feature importance
                 model = self._get_model(model_name)
                 if model:
                     return self._get_feature_importance(model, model_name)
@@ -508,9 +551,15 @@ class ModelInterface:
             # Check saved models
             for name in self._list_saved_models():
                 if name not in [model['name'] for model in models]:
+                    # Try to load evaluation to get accuracy
+                    evaluation = self._load_model_evaluation(name)
+                    accuracy = 0
+                    if evaluation and 'metrics' in evaluation:
+                        accuracy = evaluation['metrics'].get('accuracy', 0)
+                    
                     models.append({
                         'name': name,
-                        'accuracy': 0,
+                        'accuracy': accuracy,
                         'trained': False
                     })
             
@@ -681,6 +730,37 @@ class ModelInterface:
             logger.error(f"Error saving model {model_name}: {e}")
             return False
     
+    def _save_model_evaluation(self, model_name, evaluation):
+        """
+        Save model evaluation results to disk.
+        
+        Args:
+            model_name (str): Name of the model.
+            evaluation (dict): Model evaluation metrics and data.
+            
+        Returns:
+            bool: True if successful, False otherwise.
+        """
+        try:
+            # Create a copy to avoid modifying the original
+            eval_copy = evaluation.copy()
+            
+            # Convert numpy arrays to lists for pickling
+            for key in ['y_true', 'y_pred', 'y_pred_proba']:
+                if key in eval_copy and eval_copy[key] is not None:
+                    if hasattr(eval_copy[key], 'tolist'):
+                        eval_copy[key] = eval_copy[key].tolist()
+            
+            # Save to disk
+            eval_path = os.path.join(MODEL_DIR, f"{model_name}_eval.pkl")
+            with open(eval_path, 'wb') as f:
+                pickle.dump(eval_copy, f)
+            logger.info(f"Model evaluation for {model_name} saved to {eval_path}")
+            return True
+        except Exception as e:
+            logger.error(f"Error saving evaluation for {model_name}: {e}")
+            return False
+    
     def _get_model(self, model_name):
         """
         Get a model, loading from disk if necessary.
@@ -711,6 +791,30 @@ class ModelInterface:
             logger.error(f"Error loading model {model_name}: {e}")
             return None
     
+    def _load_model_evaluation(self, model_name):
+        """
+        Load model evaluation from disk.
+        
+        Args:
+            model_name (str): Name of the model.
+            
+        Returns:
+            dict: Model evaluation data, or None if not found.
+        """
+        try:
+            eval_path = os.path.join(MODEL_DIR, f"{model_name}_eval.pkl")
+            if os.path.exists(eval_path):
+                with open(eval_path, 'rb') as f:
+                    evaluation = pickle.load(f)
+                logger.info(f"Loaded evaluation for {model_name} from {eval_path}")
+                return evaluation
+            else:
+                logger.warning(f"Evaluation for {model_name} not found on disk")
+                return None
+        except Exception as e:
+            logger.error(f"Error loading evaluation for {model_name}: {e}")
+            return None
+    
     def _list_saved_models(self):
         """
         List all saved models on disk.
@@ -719,9 +823,24 @@ class ModelInterface:
             list: List of model names.
         """
         try:
-            model_files = [f for f in os.listdir(MODEL_DIR) if f.endswith('.pkl')]
+            model_files = [f for f in os.listdir(MODEL_DIR) if f.endswith('.pkl') and not f.endswith('_eval.pkl')]
             model_names = [os.path.splitext(f)[0] for f in model_files]
             return model_names
         except Exception as e:
             logger.error(f"Error listing saved models: {e}")
+            return []
+    
+    def _list_saved_model_evaluations(self):
+        """
+        List all saved model evaluations on disk.
+        
+        Returns:
+            list: List of model names with evaluations.
+        """
+        try:
+            eval_files = [f for f in os.listdir(MODEL_DIR) if f.endswith('_eval.pkl')]
+            model_names = [os.path.splitext(f)[0].replace('_eval', '') for f in eval_files]
+            return model_names
+        except Exception as e:
+            logger.error(f"Error listing saved model evaluations: {e}")
             return []
