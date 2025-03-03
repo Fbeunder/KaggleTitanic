@@ -92,6 +92,14 @@
     - Verbeter error handling en toon laad-indicatoren ✓
     - Status: Afgerond (PR #28)
 
+16. **Fix lege visualisaties in model details pagina** ✓
+    - Fix probleem waarbij visualisaties nog steeds leeg blijven na eerdere fix ✓
+    - Verbeter Plotly.js integratie en voeg fallback naar CDN toe ✓
+    - Voeg robuuste foutafhandeling toe aan visualisatierouties ✓
+    - Implementeer HTML-tabel fallbacks voor als Plotly.js niet beschikbaar is ✓
+    - Voeg debugging hulpmiddelen toe voor transparantie en probleemoplossing ✓
+    - Status: Afgerond (PR #30)
+
 ## Nice-to-haves
 
 1. **Hyperparameter optimalisatie**
@@ -152,8 +160,8 @@
     - Robuuste error handling voor ontbrekende bestanden
     - Nuttige foutmeldingen voor gebruikers
     - Logging van fouten voor troubleshooting
-    - Status: Gedeeltelijk geïmplementeerd in PR #26 voor de 'Explore Data' functionaliteit
+    - Status: Gedeeltelijk geïmplementeerd in PR #26 voor de 'Explore Data' functionaliteit en in PR #30 voor de visualisaties
 
-Alle must-have functionaliteiten zijn nu afgerond. De laatste PR (#28) zorgt voor het oplossen van het probleem met de missende visualisaties bij model details. Alle functionaliteiten die nodig zijn voor de basiswerking van de applicatie zijn nu geïmplementeerd.
+Alle must-have functionaliteiten zijn nu afgerond. De laatste PR (#30) heeft de problemen met lege visualisaties in de model details pagina opgelost, waardoor een robuustere gebruikerservaring is gerealiseerd. De applicatie kan nu correct werken, zelfs wanneer er problemen zijn met het laden van externe bibliotheken zoals Plotly.js.
 
 De nice-to-have functies zouden verdere verbeteringen bieden, maar zijn niet noodzakelijk voor de basiswerking van de applicatie.
