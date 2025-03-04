@@ -107,6 +107,15 @@
     - Uitgebreide foutafhandeling en betere gebruikersfeedback ✓
     - Status: Afgerond (PR #31)
 
+18. **Fix overzichten blijven leeg na trainen model** ✓
+    - Fix probleem waarbij visualisaties (Confusion Matrix, ROC Curve, Feature Importance) 
+      leeg blijven na het trainen van een model ✓
+    - Voeg gespecialiseerde train.js toe voor betere integratie van visualisaties ✓
+    - Verbeter formulierverzending voor model training ✓
+    - Voeg Plotly.js integratie toe met fallbacks voor betere compatibiliteit ✓
+    - Spinner animaties toegevoegd om laadstatus te tonen ✓
+    - Status: Afgerond (PR #33)
+
 ## Nice-to-haves
 
 1. **Hyperparameter optimalisatie**
@@ -167,8 +176,8 @@
     - Robuuste error handling voor ontbrekende bestanden
     - Nuttige foutmeldingen voor gebruikers
     - Logging van fouten voor troubleshooting
-    - Status: Gedeeltelijk geïmplementeerd in PR #26 voor de 'Explore Data' functionaliteit, in PR #30 voor de visualisaties, en in PR #31 voor de model training resultaten
+    - Status: Uitgebreide implementatie toegevoegd in PR #26, #30, #31 en #33
 
-Alle must-have functionaliteiten zijn nu afgerond. De laatste PR (#31) heeft het probleem opgelost waarbij model visualisaties niet werden getoond na het trainen van een model, door verbeterde opslag van modelresultaten en automatische weergave van de details.
+Alle must-have functionaliteiten zijn nu afgerond. De laatste PR (#33) heeft het probleem opgelost waarbij visualisaties (Confusion Matrix, ROC Curve, Feature Importance) niet werden getoond na het trainen van een model. Dit is gedaan door gespecialiseerde JavaScript-code en verbeterde integratie van de Plotly.js bibliotheek.
 
 De nice-to-have functies zouden verdere verbeteringen bieden, maar zijn niet noodzakelijk voor de basiswerking van de applicatie.
