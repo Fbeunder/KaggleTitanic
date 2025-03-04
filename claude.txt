@@ -139,6 +139,16 @@ De applicatie wordt opgedeeld in de volgende modules:
   - Interactieve plots voor feature analyse
 - **Afhankelijkheid**: data_loader.py, model_evaluator.py
 
+### JavaScript Files
+- **Status**: Volledige implementatie aanwezig
+- **Functionaliteit**:
+  - train.js: Gespecialiseerde visualisaties voor de trainingsresultaten
+  - results.js: Script voor het renderen van model visualisaties en vergelijkingen
+  - debug-visualization.js: Helpers voor debugging van visualisaties
+  - Dynamisch laden van Plotly.js voor interactieve grafieken
+  - Fallback-mechanismen voor wanneer visualisatiebibliotheek niet beschikbaar is
+- **Afhankelijkheid**: Geen
+
 ### Templates
 - **Status**: Volledige implementatie aanwezig
 - **Functionaliteit**:
