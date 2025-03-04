@@ -117,8 +117,12 @@ def create_app():
                 model_type = request.form.get('model_type')
                 feature_engineering = request.form.get('feature_engineering')
                 cross_validation = int(request.form.get('cross_validation', 5))
-                test_size = float(request.form.get('test_size', 0.2)) / 100  # Convert percentage to proportion
+                test_size = float(request.form.get('test_size', 20)) / 100  # Convert percentage to proportion
                 hyperparameter_tuning = bool(request.form.get('hyperparameter_tuning', False))
+                
+                logger.info(f"Training model: {model_type} with feature_engineering={feature_engineering}, "
+                           f"cross_validation={cross_validation}, test_size={test_size}, "
+                           f"hyperparameter_tuning={hyperparameter_tuning}")
                 
                 # Additional parameters would be processed here depending on the model type
                 
